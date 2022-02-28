@@ -17,7 +17,7 @@ a {
 
 
 canvas {
-  width: 500px;
-  height: 500px;
+  width: 100%;
+  height: calc(99vh - 68px);
   border: #0070f3 solid 1px;;
 }

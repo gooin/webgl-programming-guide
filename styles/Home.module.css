@@ -1,7 +1,17 @@
 .container {
-  padding: 0 2rem;
+  padding: 1rem 2rem;
+  width: 100vw;
+  height: 100vh;
 }
 
+.layout_header{
+  display: flex;
+  color: #eaeaea;
+}
+.layout_header{
+  display: flex;
+  color: #eaeaea;
+}
 
 
 .main {
