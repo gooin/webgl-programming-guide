@@ -56,6 +56,17 @@ export function initVertexBuffers(gl: WebGLRenderingContext) {
 
 }
 
+export function cratePointSizeBuffer(gl: WebGLRenderingContext) {
+    // 创建点尺寸buffer
+    const sizes = new Float32Array([10.0, 20.0, 30.0]);
+    const sizeBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, sizes, gl.STATIC_DRAW);
+    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_PointSize);
+}
+
 /**
  * Create the linked program object
  * @param gl GL context

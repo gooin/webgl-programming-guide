@@ -1,0 +1,22 @@
+## 将非坐标数据传入顶点着色器
+
+在前一章的示例程序中，我们通常会首先创建一个缓冲区对象，在其中存储顶点的
+坐标数据，然后将这个缓冲区对象传人顶点着色器。然而，三维图形不仅仅只有顶点坐
+标信息，还可能有一些其他的信息，包括颜色顶点的尺寸(大小)等。比如，第3章“绘
+制和变换三角形”中的示例程序MultiPoint.js,它绘制了三个单独的点，顶点着色器不
+仅用到了顶点的位置信息，还用到了顶点的尺寸信息。在那个示例中，点的尺寸编码在
+着色器中，是固定值，而非从外部传入，如下所示。
+
+
+```ts
+    const VSHADER_SOURCE = `
+            attribute vec4 a_Position;
+            // 顶点尺寸变量
+            attribute float a_PointSize;
+            uniform mat4 u_xformMatrix;
+            void main() {
+                gl_Position = u_xformMatrix * a_Position;
+                gl_PointSize = a_PointSize;
+            }
+    `;
+```

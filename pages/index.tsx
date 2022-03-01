@@ -32,7 +32,7 @@ const Home: NextPage = () => {
                         </Link>
                     </div>
                     <div className={styles.card}>
-                        <h2>高级变换与动画基础 &rarr;</h2>
+                        <h2>Ch4: 高级变换与动画基础 &rarr;</h2>
                         <Paragraph>
                             <Link href="/ch4/TranslateRotate">
                                 <a>平移，然后旋转</a>
@@ -44,7 +44,20 @@ const Home: NextPage = () => {
                                 <a>动画</a>
                             </Link>
                         </Paragraph>
+                    </div>
+                    <div className={styles.card}>
+                        <h2>Ch5 颜色与纹理 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch5/ColorTrangle">
+                                <a>彩色三角形</a>
+                            </Link>
+                        </Paragraph>
 
+                        <Paragraph>
+                            <Link href="/ch4/Animate">
+                                <a>动画</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
