@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css';
 import { Layout as AntdLayout, Menu } from 'antd';
 import styled from 'styled-components';
 
-const { Header, Content, Footer, Sider } = AntdLayout;
+const { Header } = AntdLayout;
 
 type PropsType = {
     children: React.ReactNode
@@ -13,11 +13,26 @@ type PropsType = {
 
 const HeaderWrapper = styled.div`
   display: flex;
+  align-items: center;
 
   h2 {
     color: white;
     margin-right: 2rem;
   }
+`;
+const Content = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 64px);
+
+  canvas {
+    flex: 1
+  }
+
+  .markdown-body {
+    flex: 1
+  }
+
 `;
 
 function Layout({ title, children }: PropsType) {

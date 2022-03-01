@@ -4,6 +4,8 @@ import { initShaders, initVertexBuffers } from '../../utils/shader_util';
 import { useWebGLInit } from '../../hooks';
 import Layout from '../../components/Layout';
 import { Matrix4 } from '../../utils/matrix4_util';
+import Note from './Note.mdx'
+import MdxWrapper from '../../components/MdxWrapper';
 
 function useRender(gl: WebGLRenderingContext) {
     console.log('rendergl', gl);
@@ -53,6 +55,9 @@ const TranslateRotate: NextPage = () => {
     useRender(gl);
     return (
         <Layout title={'TranslateRotate'}>
+            <MdxWrapper>
+                <Note />
+            </MdxWrapper>
             <canvas id={'webgl'} ref={canvasRef}/>
         </Layout>
 
