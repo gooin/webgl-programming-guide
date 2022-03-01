@@ -2,10 +2,10 @@ import { MutableRefObject, useEffect, useState } from 'react';
 import { resizeCanvasToDisplaySize } from '@/utils/common_util';
 
 export const useWebGLInit = (canvasRef: MutableRefObject<HTMLCanvasElement | null>) => {
-    console.log('useWebGLInit', canvasRef.current);
+    // console.log('useWebGLInit', canvasRef.current);
     const [canvas, setCanvas] = useState<HTMLCanvasElement | undefined>(undefined);
     useEffect(() => {
-        console.log('useWebGLInit', canvasRef.current);
+        // console.log('useWebGLInit', canvasRef.current);
         const canvasEle = document.getElementById('webgl') as HTMLCanvasElement;
         setCanvas(canvasRef.current ?? canvasEle);
     }, [canvasRef]);

@@ -6,8 +6,6 @@
 制和变换三角形”中的示例程序MultiPoint.js,它绘制了三个单独的点，顶点着色器不
 仅用到了顶点的位置信息，还用到了顶点的尺寸信息。在那个示例中，点的尺寸编码在
 着色器中，是固定值，而非从外部传入，如下所示。
-
-
 ```ts
     const VSHADER_SOURCE = `
             attribute vec4 a_Position;
@@ -20,3 +18,19 @@
             }
     `;
 ```
+类似顶点缓冲区，创建buffer即可
+```ts
+    // 创建点尺寸buffer
+    const sizes = new Float32Array([10.0, 20.0, 30.0]);
+    const sizeBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, sizes, gl.STATIC_DRAW);
+    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_PointSize);
+```
+![20220301_Gt4mfp](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220301_Gt4mfp.png)
+
+
+
+

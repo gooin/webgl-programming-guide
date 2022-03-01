@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import React, { useRef } from 'react';
-import { cratePointSizeBuffer, initShaders, initVertexBuffers } from '@/utils/shader_util';
+import { cratePointSizeBuffer, initShaders, initVertexBuffers, initVertexBuffersCh5 } from '@/utils/shader_util';
 import { useWebGLInit } from '@/hooks/index';
 import Layout from '@/components/Layout';
 import { Matrix4 } from '@/utils/matrix4_util';
@@ -28,9 +28,7 @@ function useRender(gl: WebGLRenderingContext) {
         `;
 
     initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
-    const n = initVertexBuffers(gl);
-    cratePointSizeBuffer(gl);
-
+    const n = initVertexBuffersCh5(gl);
 
     if (n < 0) {
         console.log('Failed to set the positions of the vertices');
@@ -56,7 +54,7 @@ const Index: NextPage = () => {
     const gl = useWebGLInit(canvasRef) as WebGLRenderingContext;
     useRender(gl);
     return (
-        <Layout title={'ColorTrangle'}>
+        <Layout title={'gl.vertexAttribPointer() 的步进和偏移参数'}>
             <MdxWrapper>
                 <Note/>
             </MdxWrapper>

@@ -1,0 +1,36 @@
+## gl.vertexAttribPointer() 的步进和偏移参数
+
+
+```ts
+    // 同时保存顶点坐标和大小
+    const verticesSizes = new Float32Array([
+        0.0, 0.5, 10.0,
+        -0.5, -0.5, 20.0,
+        0.5, -0.5, 30.0,
+    ]);
+    let n = 3;
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const sizeBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
+
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const FSIZE = verticesSizes.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 3, 0);
+    gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, FSIZE * 3, FSIZE * 2);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_PointSize);
+    return n;
+```
+![20220301_UjeaBP](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220301_UjeaBP.png)
+![20220301_2xFDb9](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220301_2xFDb9.png)
+![20220301_1BMwfQ](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220301_1BMwfQ.png)
+

@@ -67,6 +67,66 @@ export function cratePointSizeBuffer(gl: WebGLRenderingContext) {
     gl.enableVertexAttribArray(a_PointSize);
 }
 
+// ch5
+export function initVertexBuffersCh5(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标和大小
+    const verticesSizes = new Float32Array([
+        0.0, 0.5, 10.0,
+        -0.5, -0.5, 20.0,
+        0.5, -0.5, 30.0,
+    ]);
+    let n = 3;
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const sizeBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const FSIZE = verticesSizes.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 3, 0);
+    gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, FSIZE * 3, FSIZE * 2);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_PointSize);
+    return n;
+}
+
+// ch5
+export function initVertexBuffersCh5_2(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标和颜色
+    const verticesColors = new Float32Array([
+        0.0, 0.5, 1.0, 0.0, 0.0,
+        -0.5, -0.5, 0.0, 1.0, 0.0,
+        0.5, -0.5, 0.0, 0.0, 1.0,
+    ]);
+    let n = 3;
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const colorBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+    const FSIZE = verticesColors.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 5, 0);
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_Color);
+    return n;
+}
+
 /**
  * Create the linked program object
  * @param gl GL context

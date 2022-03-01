@@ -48,14 +48,19 @@ const Home: NextPage = () => {
                     <div className={styles.card}>
                         <h2>Ch5 颜色与纹理 &rarr;</h2>
                         <Paragraph>
-                            <Link href="/ch5/ColorTrangle">
-                                <a>彩色三角形</a>
+                            <Link href="/ch5/PointSizeInVertShader">
+                                <a>将非坐标数据传入顶点着色器</a>
                             </Link>
                         </Paragraph>
 
                         <Paragraph>
-                            <Link href="/ch4/Animate">
-                                <a>动画</a>
+                            <Link href="/ch5/MultiAttributeSizeInterleaved">
+                                <a>gl.vertexAttribPointer() 的步进和偏移参数</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch5/ChangeColorByVarying">
+                                <a>修改颜色（varying变量）</a>
                             </Link>
                         </Paragraph>
                     </div>
