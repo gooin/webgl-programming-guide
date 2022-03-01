@@ -10,6 +10,7 @@ export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement) {
     if (needResize) {
         // Make the canvas the same size
         canvas.width = displayWidth;
+        // canvas.height = displayHeight;
         canvas.height = displayHeight;
     }
     return needResize;

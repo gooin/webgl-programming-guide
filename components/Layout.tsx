@@ -23,10 +23,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: row;
   height: calc(100vh - 64px);
-
-  canvas {
-    flex: 1
-  }
+  
 
   .markdown-body {
     flex: 1

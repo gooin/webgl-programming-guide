@@ -1,0 +1,51 @@
+# 动画
+
+## 动画基础
+为了让一个三角形转动起来，你需要做的是:不断擦除和重绘三角形，并且在每次重绘时轻微地改变其角度。
+
+为了生成动画，我们需要两个关键机制:
+- 机制一:在t0、tl. t2. t3等时刻反复调用同一个函数来绘制三角形。
+- 机制二:每次绘制之前，清除上次绘制的内容，并使三角形旋转相应的角度。
+
+```ts
+    const ANGLE_STEP = 45.0; // The increments of rotation angle (degrees)
+    let currentAngle = 0.0; // Current rotation angle (degrees)
+    // 创建Matrix4对象来进行模型变换
+    const modelMatrix = new Matrix4();
+
+    const u_xformMatrix = gl.getUniformLocation(gl.program, 'u_xformMatrix');
+
+    const tick = _.debounce(() => {
+        currentAngle = animate(currentAngle); // Update the rotation angle
+        draw(gl, n, currentAngle); // Draw the triangle
+       // 告诉浏览器调用tick函数
+        requestAnimationFrame(tick);
+    }, 100);
+
+    tick();
+
+    function draw(gl, n, currentAngle) {
+        // 设置旋转矩阵
+        modelMatrix.setRotate(currentAngle, 0, 0, 1);
+        gl.uniformMatrix4fv(u_xformMatrix, false, modelMatrix.elements);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+    }
+
+    let last = Date.now();
+    function animate(angle) {
+        let now = Date.now();
+        let elapsed = now - last;
+        last = now;
+        let newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+        return newAngle %= 360;
+    }
+```
+
+### 关于 `requestAnimationFrame`
+现代的浏览器都支持多个标签页，每个标签页具有单独的JavaScript 运行环境，但是
+自`setInterval()`函数诞生之初,浏览器还没有开始支持多标签页。所以在现代浏览器中，
+不管标签页是否被激活，其中的`setInterval()`函数函数都会反复调用func，如果标签
+页比较多,就会增加浏览器的负荷。所以后来,浏览器又引入了`requestAnimation()` 方法,
+该方法只有当标签页处于激活状态时才会生效。
+

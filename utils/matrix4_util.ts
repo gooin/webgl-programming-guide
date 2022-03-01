@@ -6,7 +6,7 @@
  * The matrix is replaced by the calculated result.
  */
 
-import {FixedArray} from "./types";
+import { FixedArray } from './types';
 
 /**
  * Constructor of Matrix4

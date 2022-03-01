@@ -1,5 +1,4 @@
-import { resizeCanvasToDisplaySize } from '@/utils/common_util';
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 
 export const useWebGLInit = (canvasRef: MutableRefObject<HTMLCanvasElement | null>) => {
     console.log('useWebGLInit', canvasRef.current);
@@ -7,14 +6,14 @@ export const useWebGLInit = (canvasRef: MutableRefObject<HTMLCanvasElement | nul
     useEffect(() => {
         console.log('useWebGLInit', canvasRef.current);
         const canvasEle = document.getElementById('webgl') as HTMLCanvasElement;
-        setCanvas(canvasEle);
+        setCanvas(canvasRef.current ?? canvasEle);
     }, [canvasRef]);
 
     if (!canvas) {
         return;
     }
     // const canvas = canvasRef.current;
-    resizeCanvasToDisplaySize(canvas);
+    // resizeCanvasToDisplaySize(canvas);
     let gl = canvas.getContext('webgl') as WebGLRenderingContext;
     console.log('gl', gl);
     //指定清空的颜色
