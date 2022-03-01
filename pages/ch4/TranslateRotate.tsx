@@ -1,11 +1,11 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useRef } from 'react';
-import { initShaders, initVertexBuffers } from '../../utils/shader_util';
+import { initShaders, initVertexBuffers } from '@/utils/shader_util';
 import { useWebGLInit } from '../../hooks';
-import Layout from '../../components/Layout';
-import { Matrix4 } from '../../utils/matrix4_util';
-import Note from './Note.mdx'
-import MdxWrapper from '../../components/MdxWrapper';
+import Layout from '@/components/Layout';
+import { Matrix4 } from '@/utils/matrix4_util';
+import Note from './Note.mdx';
+import MdxWrapper from '@/components/MdxWrapper';
 
 function useRender(gl: WebGLRenderingContext) {
     console.log('rendergl', gl);
@@ -56,7 +56,7 @@ const TranslateRotate: NextPage = () => {
     return (
         <Layout title={'TranslateRotate'}>
             <MdxWrapper>
-                <Note />
+                <Note/>
             </MdxWrapper>
             <canvas id={'webgl'} ref={canvasRef}/>
         </Layout>

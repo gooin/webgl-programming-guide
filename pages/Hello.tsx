@@ -1,11 +1,11 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useRef } from 'react';
-import { useWebGLInit } from '../hooks';
-import { initShaders } from '../utils/shader_util';
-import Layout from '../components/Layout';
+import { useWebGLInit } from '@/hooks/index';
+import { initShaders } from '@/utils/shader_util';
+import Layout from '@/components/Layout';
 
 // @ts-ignore
-import VSHADER_SOURCE  from '../shaders/vert/ch2_point.vert';
+import VSHADER_SOURCE  from '@/shaders/vert/ch2_point.vert';
 
 function useRender(gl: WebGLRenderingContext) {
     console.log('rendergl', gl);

@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import styles from '../styles/Home.module.css';
-import { Layout as AntdLayout, Menu } from 'antd';
+import { Layout as AntdLayout } from 'antd';
 import styled from 'styled-components';
 
 const { Header } = AntdLayout;

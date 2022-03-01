@@ -1,4 +1,4 @@
-import { resizeCanvasToDisplaySize } from '../utils/common_util';
+import { resizeCanvasToDisplaySize } from '@/utils/common_util';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 
 export const useWebGLInit = (canvasRef: MutableRefObject<HTMLCanvasElement | null>) => {
