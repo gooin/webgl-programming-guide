@@ -68,6 +68,11 @@ const Home: NextPage = () => {
                                 <a>纹理映射</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch5/MultiTexture">
+                                <a>多幅纹理映射</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 

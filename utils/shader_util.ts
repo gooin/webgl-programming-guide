@@ -158,6 +158,36 @@ export function initVertexBuffersCh5_3(gl: WebGLRenderingContext) {
     return n;
 }
 
+export function initVertexBuffersCh5_4(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标纹理坐标
+    const verticesCoords = new Float32Array([
+        -0.5, 0.5, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 0.0,
+        0.5, 0.5, 1.0, 1.0,
+        0.5, -0.5, 1.0, 0.0,
+    ]);
+    let n = 4;
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const coordBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesCoords, gl.STATIC_DRAW);
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+    const FSIZE = verticesCoords.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_TexCoord);
+    return n;
+}
+
 export function initTextures(gl: WebGLRenderingContext, n: number) {
     const image = new Image();
     image.onload = () => {
@@ -194,6 +224,72 @@ function loadTexture(gl: WebGLRenderingContext, n: number, image: HTMLImageEleme
     //绘制点
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 
+}
+
+// 标记纹理单元是不是就绪
+let g_texUnit0 = false;
+let g_texUnit1 = false;
+const flags = { g_texUnit0, g_texUnit1 };
+
+export function initTextures_Ch5_4(gl: WebGLRenderingContext, n: number) {
+
+    // 创建纹理对象
+    const texture0 = gl.createTexture()!;
+    const texture1 = gl.createTexture()!;
+
+    const image0 = new Image();
+    image0.onload = () => {
+        // 图像加载完成处理纹理
+        // 获取uniform存储位置
+        const u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler0')!;
+        loadTexture_Ch5_4(gl, n, u_Sampler0, texture0, image0, 0);
+    };
+    image0.src = '/images/sky.jpg';
+
+    const image1 = new Image();
+    image1.onload = () => {
+        // 图像加载完成处理纹理
+        const u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1')!;
+        loadTexture_Ch5_4(gl, n, u_Sampler1, texture1, image1, 1);
+    };
+    image1.src = '/images/circle.gif';
+}
+
+function loadTexture_Ch5_4(
+    gl: WebGLRenderingContext, n: number, u_Sampler: WebGLUniformLocation,
+    texture: WebGLTexture, image: HTMLImageElement, texUnit: number,
+) {
+    //对纹理图像y轴反转
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+    // 激活纹理
+    if (texUnit === 0) {
+        // 开启0号纹理单元
+        gl.activeTexture(gl.TEXTURE0);
+        flags.g_texUnit0 = true;
+    } else {
+        // 开启1号纹理单元
+        gl.activeTexture(gl.TEXTURE1);
+        flags.g_texUnit1 = true;
+    }
+
+    // 向target绑定纹理对象
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // 配置纹理参数
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // 配置纹理图像
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // 将0号纹理传给着色器
+    gl.uniform1i(u_Sampler, texUnit);
+    console.log('loadtexture', texture);
+
+    if (flags.g_texUnit0 && flags.g_texUnit1) {
+        // 清空canvas
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        //绘制点
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+    }
+    console.log('loadTexture_Ch5_4', flags);
 }
 
 /**
