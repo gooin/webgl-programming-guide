@@ -1,15 +1,8 @@
 import type { NextPage } from 'next';
 import React, { useRef } from 'react';
-import {
-    cratePointSizeBuffer,
-    initShaders, initTextures,
-    initVertexBuffers,
-    initVertexBuffersCh5,
-    initVertexBuffersCh5_2, initVertexBuffersCh5_3,
-} from '@/utils/shader_util';
+import { initShaders, initTextures, initVertexBuffersCh5_3 } from '@/utils/shader_util';
 import { useWebGLInit } from '@/hooks/index';
 import Layout from '@/components/Layout';
-import { Matrix4 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';
 import CanvasWrapper from '@/components/CanvasWrapper';
@@ -47,10 +40,7 @@ function useRender(gl: WebGLRenderingContext) {
         console.log('Failed to set the positions of the vertices');
         return;
     }
-    // 清空canvas
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    //绘制点
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+
     // }, [gl]);
 
 }

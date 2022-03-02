@@ -131,10 +131,10 @@ export function initVertexBuffersCh5_2(gl: WebGLRenderingContext) {
 export function initVertexBuffersCh5_3(gl: WebGLRenderingContext) {
     // 同时保存顶点坐标纹理坐标
     const verticesCoords = new Float32Array([
-        -0.5, 0.5, 0.0, 1.0,
-        -0.5, -0.5, 0.0, 0.0,
-        0.5, 0.5, 1.0, 1.0,
-        0.5, -0.5, 1.0, 0.0,
+        -0.5, 0.5, -0.3, 1.7,
+        -0.5, -0.5, -0.3, -0.2,
+        0.5, 0.5, 1.7, 1.7,
+        0.5, -0.5, 1.7, -0.2,
     ]);
     let n = 4;
     // step1 创建缓冲区对象
@@ -168,11 +168,11 @@ export function initTextures(gl: WebGLRenderingContext, n: number) {
 }
 
 function loadTexture(gl: WebGLRenderingContext, n: number, image: HTMLImageElement) {
-
     // 创建纹理对象
     const texture = gl.createTexture()!;
     // 获取uniform存储位置
     const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler')!;
+
     //对纹理图像y轴反转
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     // 开启0号纹理单元
@@ -181,10 +181,19 @@ function loadTexture(gl: WebGLRenderingContext, n: number, image: HTMLImageEleme
     gl.bindTexture(gl.TEXTURE_2D, texture);
     // 配置纹理参数
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
     // 配置纹理图像
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // 将0号纹理传给着色器
     gl.uniform1i(u_Sampler, 0);
+    console.log('loadtexture', texture);
+
+    // 清空canvas
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    //绘制点
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+
 }
 
 /**
