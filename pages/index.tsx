@@ -69,6 +69,31 @@ const Home: NextPage = () => {
                             </Link>
                         </Paragraph>
                     </div>
+
+                    <div className={styles.card}>
+                        <h2>Ch7 进入三维世界 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch7/EyePointAndViewDirection">
+                                <a>视点和视线</a>
+                            </Link>
+                        </Paragraph>
+
+                        <Paragraph>
+                            <Link href="/ch5/MultiAttributeSizeInterleaved">
+                                <a>gl.vertexAttribPointer() 的步进和偏移参数</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch5/ChangeColorByVarying">
+                                <a>修改颜色（varying变量）</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch5/Texture">
+                                <a>纹理映射</a>
+                            </Link>
+                        </Paragraph>
+                    </div>
                 </div>
 
             </main>

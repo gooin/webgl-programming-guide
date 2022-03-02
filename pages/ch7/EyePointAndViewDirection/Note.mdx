@@ -1,0 +1,31 @@
+## 视点和视线
+
+三维物体与二维图形的最显著区别就是，三维物体具有深度，也就是Z轴。因此，你会遇到一些之前不曾考虑过的问题。事实上，我们最后还是得把三维场景绘制到二维的屏幕上，即绘制观察者看到的世界，面观察者可以处在任意位置观察。为了定义一个
+观察者，你需要考虑以下两点:
+- 观察方向，即观察者自己在什么位置，在看场景的哪- -部分?
+- 可视距离，即观察者能够看多远?
+我们将观察者所处的位置称为`视点Í(eye point)`,从视点出发沿着观察方向的射线称作`视线(viewing direction)`。 本节将研究如何通过视点和视线来描述观察者。
+
+## 视点.观察目标点和上方向
+为了确定观察者的状态，你需要获取两项信息:`视点`，即观察者的位置。`观察目标点(look-at point)`,即被观察目标所在的点，它可以用来确定视线。此外，因为我们最后要把观察到的景象绘制到屏幕上，还需要知道`上方向(up direction)`。
+
+![20220303_e4TKUR](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220303_e4TKUR.png)
+
+- 视点:观察者所在的三维空间中位置，视线的起点。在接下来的几节中，视点坐标都用`(eyeX, eyeY, eyeZ)`表示。
+- 观察目标点:被观察目标所在的点。视线从视点出发，穿过观察目标点并继续延伸。注意，观察目标点是一个点，而不是视线方向，只有同时知道观察目标点和视点，才能算出视线方向。观察目标点的坐标用`(atX, atY, atZ)`表示。
+- 上方向:最终绘制在屏幕上的影像中的向上的方向。试想，如果仅仅确定了视点和观察点，观察者还是可能以视线为轴旋转的(如图7.4所示，头部偏移会导致观察到的场景也偏移了)。所以，为了将观察者固定住，我们还需要指定上方向。上方向是具有3个分量的矢量，用`(upX, upY, upZ)`表示。
+
+![20220303_ivB9nB](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220303_ivB9nB.png)
+
+```ts
+    const viewMatrix = new Matrix4();
+    viewMatrix.setLookAt(
+        0.20, 0.25, 0.25,
+        0, 0, 0,
+        0, 1, 0
+    );
+    const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
+    gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+```
+
+![20220303_hxPbG8](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220303_hxPbG8.png)
