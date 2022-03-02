@@ -1,5 +1,4 @@
 // 扩展ts定义的类型。
-import { func } from 'prop-types';
 
 declare global {
     interface WebGLRenderingContext {
@@ -160,21 +159,20 @@ export function initVertexBuffersCh5_3(gl: WebGLRenderingContext) {
 }
 
 export function initTextures(gl: WebGLRenderingContext, n: number) {
-    // 创建纹理对象
-    const texture = gl.createTexture()!;
-    // 获取uniform存储位置
-    const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler')!;
-
     const image = new Image();
     image.onload = () => {
         // 图像加载完成处理纹理
-        loadTexture(gl, n, texture, u_Sampler, image);
+        loadTexture(gl, n, image);
     };
     image.src = '/images/sky.jpg';
 }
 
-function loadTexture(gl: WebGLRenderingContext, n: number,
-    texture: WebGLTexture, u_Sampler: WebGLUniformLocation, image: HTMLImageElement) {
+function loadTexture(gl: WebGLRenderingContext, n: number, image: HTMLImageElement) {
+
+    // 创建纹理对象
+    const texture = gl.createTexture()!;
+    // 获取uniform存储位置
+    const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler')!;
     //对纹理图像y轴反转
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     // 开启0号纹理单元
