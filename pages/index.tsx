@@ -63,6 +63,11 @@ const Home: NextPage = () => {
                                 <a>修改颜色（varying变量）</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch5/Texture">
+                                <a>纹理映射</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 

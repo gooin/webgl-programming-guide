@@ -1,4 +1,6 @@
 // 扩展ts定义的类型。
+import { func } from 'prop-types';
+
 declare global {
     interface WebGLRenderingContext {
         program: WebGLProgram;
@@ -125,6 +127,66 @@ export function initVertexBuffersCh5_2(gl: WebGLRenderingContext) {
     gl.enableVertexAttribArray(a_Position);
     gl.enableVertexAttribArray(a_Color);
     return n;
+}
+
+export function initVertexBuffersCh5_3(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标纹理坐标
+    const verticesCoords = new Float32Array([
+        -0.5, 0.5, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 0.0,
+        0.5, 0.5, 1.0, 1.0,
+        0.5, -0.5, 1.0, 0.0,
+    ]);
+    let n = 4;
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const coordBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesCoords, gl.STATIC_DRAW);
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+    const FSIZE = verticesCoords.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_TexCoord);
+    return n;
+}
+
+export function initTextures(gl: WebGLRenderingContext, n: number) {
+    // 创建纹理对象
+    const texture = gl.createTexture()!;
+    // 获取uniform存储位置
+    const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler')!;
+
+    const image = new Image();
+    image.onload = () => {
+        // 图像加载完成处理纹理
+        loadTexture(gl, n, texture, u_Sampler, image);
+    };
+    image.src = '/images/sky.jpg';
+}
+
+function loadTexture(gl: WebGLRenderingContext, n: number,
+    texture: WebGLTexture, u_Sampler: WebGLUniformLocation, image: HTMLImageElement) {
+    //对纹理图像y轴反转
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    // 开启0号纹理单元
+    gl.activeTexture(gl.TEXTURE0);
+    // 向target绑定纹理对象
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // 配置纹理参数
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // 配置纹理图像
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // 将0号纹理传给着色器
+    gl.uniform1i(u_Sampler, 0);
 }
 
 /**

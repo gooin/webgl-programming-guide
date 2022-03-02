@@ -7,6 +7,7 @@
       "@/hooks/*": ["hooks/*"],
       "@/shaders/*": ["shaders/*"],
       "@/utils/*": ["utils/*"],
+      "@/images/*": ["images/*"],
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
