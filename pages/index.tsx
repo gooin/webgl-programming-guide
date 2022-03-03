@@ -79,18 +79,8 @@ const Home: NextPage = () => {
                         </Paragraph>
 
                         <Paragraph>
-                            <Link href="/ch5/MultiAttributeSizeInterleaved">
-                                <a>gl.vertexAttribPointer() 的步进和偏移参数</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch5/ChangeColorByVarying">
-                                <a>修改颜色（varying变量）</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch5/Texture">
-                                <a>纹理映射</a>
+                            <Link href="/ch7/LookAtRotatedTrangles">
+                                <a>观察旋转的三角形</a>
                             </Link>
                         </Paragraph>
                     </div>
