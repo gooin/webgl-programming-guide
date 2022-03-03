@@ -55,9 +55,15 @@ function useRender(gl: WebGLRenderingContext) {
         //模型视图矩阵 两个矩阵相乘
         const viewModelMatrix = viewMatrix.multiply(modelMatrix);
 
+        // 投影矩阵，透视投影，修复被擦掉的一角
+        const projMatrix = new Matrix4();
+        projMatrix.setOrtho(-1,1,-1,1,0,2)
+
+        const finalMatrix = projMatrix.multiply(viewModelMatrix);
         const u_ModelViewMatrix = gl.getUniformLocation(gl.program, 'u_ModelViewMatrix');
+
         // 将矩阵传给uniform变量
-        gl.uniformMatrix4fv(u_ModelViewMatrix, false, viewModelMatrix.elements);
+        gl.uniformMatrix4fv(u_ModelViewMatrix, false, finalMatrix.elements);
 
         let g_eyeX = 0.20, g_eyeY = 0.25, g_eyeZ = 0.25;
         document.onkeydown = (ev) => {
@@ -72,27 +78,6 @@ function useRender(gl: WebGLRenderingContext) {
             } else {
                 return;
             }
-            const viewMatrix = new Matrix4();
-            viewMatrix.setLookAt(
-                viewX, g_eyeY, g_eyeZ,
-                0, 0, 0,
-                0, 1, 0,
-            );
-            //模型矩阵
-            const modelMatrix = new Matrix4();
-            modelMatrix.setRotate(10, 0, 0, 1);
-
-            //模型视图矩阵 两个矩阵相乘
-            const viewModelMatrix = viewMatrix.multiply(modelMatrix);
-
-            const u_ModelViewMatrix = gl.getUniformLocation(gl.program, 'u_ModelViewMatrix');
-            // 将矩阵传给uniform变量
-            gl.uniformMatrix4fv(u_ModelViewMatrix, false, viewModelMatrix.elements);
-            // 清空canvas
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            //绘制点
-            gl.drawArrays(gl.TRIANGLES, 0, n);
-
             return [viewX];
         };
 
@@ -119,7 +104,8 @@ const Index: NextPage = () => {
                 <Note/>
             </MdxWrapper>
             <CanvasWrapper>
-                <Text mark>按方向键【上】【下】旋转视角, 当前 viewMatrix eyeX：  {viewX}</Text>
+                <Text mark>按方向键【上】【下】旋转视角</Text>
+                <Text mark>当前 viewMatrix eyeX： {viewX}</Text>
                 <canvas id={'webgl'} ref={canvasRef}/>
             </CanvasWrapper>
 
