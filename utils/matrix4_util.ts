@@ -1,3 +1,6 @@
+// @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 // matrix4_util.js (c) 2012 kanda and matsuda
 /**
  * This is a class treating 4x4 matrix.
@@ -17,6 +20,7 @@ import { FixedArray } from './types';
 
 class Matrix4 {
     elements: Float32Array;
+
     constructor(opt_src?: FixedArray<number, 16>) {
         let i, s, d;
         if (opt_src) {
@@ -30,7 +34,6 @@ class Matrix4 {
             this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
         }
     }
-
 
     /**
      * Set the identity matrix.
@@ -853,7 +856,6 @@ class Vector3 {
     }
 }
 
-
 /**
  * Constructor of Vector4
  * If opt_src is specified, new vector is initialized by opt_src.
@@ -871,6 +873,5 @@ class Vector4 {
         this.elements = v;
     }
 }
-
 
 export {Matrix4, Vector4, Vector3}

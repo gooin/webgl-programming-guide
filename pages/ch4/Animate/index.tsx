@@ -49,7 +49,7 @@ function useRender(gl: WebGLRenderingContext) {
 
         tick();
 
-        function draw(gl, n, currentAngle) {
+        function draw(gl: WebGLRenderingContext, n: number, currentAngle: number) {
             // 设置旋转矩阵
             modelMatrix.setRotate(currentAngle, 0, 0, 1);
             modelMatrix.translate(0.3, 0, 0);
@@ -60,7 +60,7 @@ function useRender(gl: WebGLRenderingContext) {
 
         let last = Date.now();
 
-        function animate(angle) {
+        function animate(angle: number) {
             let now = Date.now();
             let elapsed = now - last;
             last = now;
