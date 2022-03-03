@@ -88,6 +88,12 @@ const Home: NextPage = () => {
                                 <a>观察旋转的三角形</a>
                             </Link>
                         </Paragraph>
+
+                        <Paragraph>
+                            <Link href="/ch7/OrthoView">
+                                <a>正射投影</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
