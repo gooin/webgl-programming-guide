@@ -12,6 +12,7 @@ const withMDX = require('@next/mdx')({
 
 const nextConfig = {
     reactStrictMode: true,
+    styledComponents: true,
     webpack: (config, options) => {
         // Important: return the modified config
         config.module.rules.push({
