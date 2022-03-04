@@ -94,6 +94,11 @@ const Home: NextPage = () => {
                                 <a>正射投影</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/PerspectiveView">
+                                <a>透视投影</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
