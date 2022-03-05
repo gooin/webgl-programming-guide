@@ -502,3 +502,66 @@ export function initVertexBuffersCh8_2(gl: WebGLRenderingContext) {
     return n;
 }
 
+export function initVertexBuffersCube(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标纹理坐标
+    // Create a cube
+    //    v6----- v5
+    //   /|      /|
+    //  v1------v0|
+    //  | |     | |
+    //  | |v7---|-|v4
+    //  |/      |/
+    //  v2------v3
+    const verticesColors = new Float32Array([
+        // Vertex coordinates and color
+        1.0,  1.0,  1.0,     1.0,  1.0,  1.0,  // v0 White
+        -1.0,  1.0,  1.0,     1.0,  0.0,  1.0,  // v1 Magenta
+        -1.0, -1.0,  1.0,     1.0,  0.0,  0.0,  // v2 Red
+        1.0, -1.0,  1.0,     1.0,  1.0,  0.0,  // v3 Yellow
+        1.0, -1.0, -1.0,     0.0,  1.0,  0.0,  // v4 Green
+        1.0,  1.0, -1.0,     0.0,  1.0,  1.0,  // v5 Cyan
+        -1.0,  1.0, -1.0,     0.0,  0.0,  1.0,  // v6 Blue
+        -1.0, -1.0, -1.0,     0.0,  0.0,  0.0   // v7 Black
+    ]);
+
+    // Indices of the vertices
+    const indices = new Uint8Array([
+        0, 1, 2,   0, 2, 3,    // front
+        0, 3, 4,   0, 4, 5,    // right
+        0, 5, 6,   0, 6, 1,    // up
+        1, 6, 7,   1, 7, 2,    // left
+        7, 4, 3,   7, 3, 2,    // down
+        4, 7, 6,   4, 6, 5     // back
+    ]);
+
+
+    // step1 创建缓冲区对象
+    const vertexColorBuffer = gl.createBuffer();
+    const indexBuffer = gl.createBuffer();
+
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+    // ！！！顶点信息
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
+    // ！！！顶点信息
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+
+    const FSIZE = verticesColors.BYTES_PER_ELEMENT;
+
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, FSIZE * 6, 0);
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_Color);
+
+
+    return indices.length;
+}

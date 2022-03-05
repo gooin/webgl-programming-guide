@@ -104,6 +104,16 @@ const Home: NextPage = () => {
                                 <a>模型矩阵、视图矩阵、投影矩阵组合</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/Cube">
+                                <a>立方体</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/SingleColorCube">
+                                <a>单色立方体</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
