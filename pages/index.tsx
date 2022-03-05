@@ -111,7 +111,7 @@ const Home: NextPage = () => {
                         </Paragraph>
                         <Paragraph>
                             <Link href="/ch7/SingleColorCube">
-                                <a>单色立方体</a>
+                                <a>纯色立方体</a>
                             </Link>
                         </Paragraph>
                     </div>
