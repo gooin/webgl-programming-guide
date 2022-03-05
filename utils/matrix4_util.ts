@@ -65,7 +65,7 @@ class Matrix4 {
      * @param src source matrix
      * @return this
      */
-    set(src) {
+    set(src): Matrix4 {
         let i, s, d;
 
         s = src.elements;

@@ -461,3 +461,44 @@ export function initVertexBuffersCh8_1(gl: WebGLRenderingContext) {
     return n;
 }
 
+export function initVertexBuffersCh8_2(gl: WebGLRenderingContext) {
+    // 同时保存顶点坐标纹理坐标
+    const verticesColors = new Float32Array([
+        // 顶点坐标和颜色
+
+
+        0.0,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
+        -0.5, -1.0,  -2.0,  1.0,  1.0,  0.4,
+        0.5, -1.0,  -2.0,  1.0,  0.4,  0.4,
+
+        0.0,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one
+        -0.5, -1.0,   0.0,  0.4,  0.4,  1.0,
+        0.5, -1.0,   0.0,  1.0,  0.4,  0.4,
+
+        0.0,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
+        -0.5, -1.0,  -4.0,  0.4,  1.0,  0.4,
+        0.5, -1.0,  -4.0,  1.0,  0.4,  0.4,
+    ]);
+    const n = 9; // Three vertices per triangle * 6
+
+    // step1 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer();
+    const colorBuffer = gl.createBuffer();
+    // step2 将缓冲区对象绑定到目标
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    //step3 向缓冲区写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
+    //step4 将缓冲区分配给attribute变量，这个2指两个点是一个坐标
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+    const FSIZE = verticesColors.BYTES_PER_ELEMENT;
+    // 重点在这里！！！
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, FSIZE * 6, 0);
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3);
+    // step5 开启attribute变量。
+    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(a_Color);
+    return n;
+}
+

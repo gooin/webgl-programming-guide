@@ -99,6 +99,11 @@ const Home: NextPage = () => {
                                 <a>透视投影</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/ModelViewProjMatrix">
+                                <a>模型矩阵、视图矩阵、投影矩阵组合</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
