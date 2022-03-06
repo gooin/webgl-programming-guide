@@ -7,7 +7,7 @@ import { Matrix4, Vector3 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';
 import CanvasWrapper from '@/components/CanvasWrapper';
-import VSHADER_SOURCE from '@/shaders/vert/ch8_s2.vert';
+import VSHADER_SOURCE from '@/shaders/vert/ch8_s3.vert';
 import { Typography } from 'antd';
 
 const { Text } = Typography;
@@ -34,12 +34,7 @@ function useRender(gl: WebGLRenderingContext) {
 
         const n = initVertexBuffersCube_Ch8_1(gl);
 
-        const mvpMatrix = new Matrix4();
-        mvpMatrix.setPerspective(30, 1, 1, 100);
-        mvpMatrix.lookAt(near, far, 7, 0, 0, 0, 0, 1, 0);
-        const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
-        // 将矩阵传给uniform变量
-        gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+
 
         const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
         const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
@@ -47,10 +42,35 @@ function useRender(gl: WebGLRenderingContext) {
 
         gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
         gl.uniform3f(u_AmbientLight, 0.2,0.2, 0.2);
-        const lightDirection = new Vector3([0.5, 3.0, 4.0]);
+        const lightDirection = new Vector3([0.0, 3.0, 4.0]);
         lightDirection.normalize();
 
         gl.uniform3fv(u_LightDirection, lightDirection.elements);
+
+        const mvpMatrix = new Matrix4();
+        const modelMatrix = new Matrix4(); // 模型矩阵
+        const normalMatrix = new Matrix4(); // 变换法向量的矩阵
+        const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
+
+        // Calculate the model matrix
+        modelMatrix.setTranslate(0, 0.9, 0); // Translate to the y-axis direction
+        modelMatrix.rotate(90, 0, 0, 1);     // Rotate 90 degree around the z-axis
+
+        // Calculate the matrix to transform the normal based on the model matrix
+        normalMatrix.setInverseOf(modelMatrix);
+        normalMatrix.transpose();
+
+        gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
+
+
+        mvpMatrix.setPerspective(30, 1, 1, 100);
+        mvpMatrix.lookAt(near, far, 7, 0, 0, 0, 0, 1, 0);
+        mvpMatrix.multiply(modelMatrix);
+        const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
+        // 将矩阵传给uniform变量
+        gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+
+
 
         document.onkeydown = (ev) => {
             const { keyCode } = ev;
@@ -72,6 +92,9 @@ function useRender(gl: WebGLRenderingContext) {
                 break;
             }
 
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            // Draw the cube
             gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
 
             return [near, far];
@@ -85,6 +108,9 @@ function useRender(gl: WebGLRenderingContext) {
         // gl.clear(gl.COLOR_BUFFER_BIT);
         //绘制点
         // gl.drawArrays(gl.TRIANGLES, 0, n);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // Draw the cube
         gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
     }, [gl, near, far]);
 
@@ -96,7 +122,7 @@ const Index: NextPage = () => {
     const gl = useWebGLInit(canvasRef) as WebGLRenderingContext;
     const [near, far] = useRender(gl);
     return (
-        <Layout title={'环境光'}>
+        <Layout title={'运动物体的光照效果'}>
             <MdxWrapper>
                 <Note/>
             </MdxWrapper>
