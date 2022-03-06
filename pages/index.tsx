@@ -122,6 +122,11 @@ const Home: NextPage = () => {
                                 <a>光照原理</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/LightedCubeAmbient">
+                                <a>环境光</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
