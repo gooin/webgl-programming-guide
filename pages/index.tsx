@@ -115,6 +115,14 @@ const Home: NextPage = () => {
                             </Link>
                         </Paragraph>
                     </div>
+                    <div className={styles.card}>
+                        <h2>Ch8 光照 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch8/LightedCube">
+                                <a>光照原理</a>
+                            </Link>
+                        </Paragraph>
+                    </div>
                 </div>
 
             </main>
