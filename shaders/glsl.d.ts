@@ -6,7 +6,7 @@ declare module '*.vert' {
     const value: string
     export default value
 }
-declare module '*.farg' {
+declare module '*.frag' {
     const value: string
     export default value
 }

@@ -137,6 +137,11 @@ const Home: NextPage = () => {
                                 <a>点光源光</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/PointLightedCubeFragment">
+                                <a>点光源光: 逐片元光照</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 

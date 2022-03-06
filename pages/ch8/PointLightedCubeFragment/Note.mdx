@@ -1,0 +1,70 @@
+## 更逼真:逐片元光照
+运行程序，你会发现效果更加逼真了。但是，如果仔细观察还是能
+现一个问题:立方体表面上有不自然的线条。
+
+**中间看起来有一条线**
+
+乍一听，要在表面的每一点上计算光照产生的颜色，似乎是个不可能完成的任务。
+
+但实际上，我们只需要逐片元地进行计算。片元着色器总算要派上用场了。
+
+![20220306_yEgPyH](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220306_yEgPyH.png)
+
+为了逐片元地计算光照，你需要知道:
+1. 片元在世界坐标系下的坐标，
+2. 片元处表面的法向量。
+
+可以在顶点着色器中，将顶点的世界坐标和法向量以`varying`变量的形式
+传入片元着色器，片元着色器中的同名变量就已经是内插后的逐片元值了。
+
+
+```glsl
+// vertex shader
+attribute vec4 a_Position;
+attribute vec4 a_Color;
+attribute vec4 a_Normal;
+uniform mat4 u_MvpMatrix;
+uniform mat4 u_NormalMatrix;
+uniform mat4 u_ModelMatrix;
+
+varying vec4 v_Color;
+varying vec3 v_Normal;
+varying vec3 v_Position;
+
+void main(){
+    gl_Position = u_MvpMatrix * a_Position;
+    v_Position = vec3(u_ModelMatrix * a_Position);
+    v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));
+    v_Color = a_Color;
+}
+```
+```glsl
+// fragment shader
+
+precision mediump float;
+
+uniform vec3 u_LightColor;
+uniform vec3 u_LightPosition;
+uniform vec3 u_AmbientLight;
+varying vec4 v_Color;
+varying vec3 v_Normal;
+varying vec3 v_Position;
+
+void main() {
+    vec3 normal = normalize(v_Normal);
+    vec3 lightDirection = normalize(u_LightPosition - v_Position);
+    //    cosθ = 光线方向 * 法线方向
+    float nDotL = max(dot(lightDirection, normal), 0.0);
+    //    漫反射光颜色 = 入射光颜色 * 表面基底色 * cosθ
+    vec3 diffuse = u_LightColor * vec3(v_Color) * nDotL;
+    //    环境光颜色 = 环境光 * 表面基底色
+    vec3 ambient = u_AmbientLight * vec3(v_Color);
+    //    最终颜色 = 环境光 + 漫反射光
+    gl_FragColor = vec4(diffuse + ambient, v_Color.a);;
+}
+
+
+```
+![20220306_WaTA4J](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220306_WaTA4J.png)
+
+
