@@ -143,6 +143,14 @@ const Home: NextPage = () => {
                             </Link>
                         </Paragraph>
                     </div>
+                    <div className={styles.card}>
+                        <h2>Ch9 关节模型 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch9/JointModel">
+                                <a>基础关节</a>
+                            </Link>
+                        </Paragraph>
+                    </div>
                 </div>
 
             </main>
