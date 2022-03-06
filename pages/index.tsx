@@ -132,6 +132,11 @@ const Home: NextPage = () => {
                                 <a>运动物体的光照</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/PointLightedCube">
+                                <a>点光源光</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
