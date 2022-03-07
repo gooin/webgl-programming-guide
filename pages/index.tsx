@@ -88,6 +88,68 @@ const Home: NextPage = () => {
                                 <a>观察旋转的三角形</a>
                             </Link>
                         </Paragraph>
+
+                        <Paragraph>
+                            <Link href="/ch7/OrthoView">
+                                <a>正射投影</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/PerspectiveView">
+                                <a>透视投影</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/ModelViewProjMatrix">
+                                <a>模型矩阵、视图矩阵、投影矩阵组合</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/Cube">
+                                <a>立方体</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch7/SingleColorCube">
+                                <a>纯色立方体</a>
+                            </Link>
+                        </Paragraph>
+                    </div>
+                    <div className={styles.card}>
+                        <h2>Ch8 光照 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch8/LightedCube">
+                                <a>光照原理</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/LightedCubeAmbient">
+                                <a>环境光</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/LightedTranslatedRotatedCube">
+                                <a>运动物体的光照</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/PointLightedCube">
+                                <a>点光源光</a>
+                            </Link>
+                        </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch8/PointLightedCubeFragment">
+                                <a>点光源光: 逐片元光照</a>
+                            </Link>
+                        </Paragraph>
+                    </div>
+                    <div className={styles.card}>
+                        <h2>Ch9 关节模型 &rarr;</h2>
+                        <Paragraph>
+                            <Link href="/ch9/JointModel">
+                                <a>基础关节</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 

@@ -1,0 +1,40 @@
+## 可视空间 `透视投影(perspective projection)`
+
+![20220304_5qi0AJ](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_5qi0AJ.png)
+
+## 定义透视投影可视空间
+透视投影可视空间如图7.22所示。就像盒状可视空间那样，透视投影可视空间也有
+视点，视线.近裁剪面和远裁剪面，这样可视空间内的物体才会被显示，可视空间外的
+物体则不会显示。那些跨越可视空间边界的物体则只会显示其在可视空间内的部分。
+
+![20220304_RrvP05](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_RrvP05.png)
+![20220304_Cx7VNM](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_Cx7VNM.png)
+
+`TODO: 这里补充GAME101上面关于透视投影的内容`
+
+![20220304_X5B57X](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_X5B57X.png)
+
+
+```ts
+        // 视图矩阵
+        const viewMatrix = new Matrix4();
+        viewMatrix.setLookAt(
+            0, 0, 5,
+            0, 0, -100,
+            0, 1, 0,
+        );
+        // 可视空间投影矩阵
+        const projMatrix = new Matrix4();
+        projMatrix.setPerspective(30,1,1,100)
+```
+
+![20220304_5IpXP8](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_5IpXP8.png)
+
+首先，距离较远的三角形看上去变小了;其次，三角形被不同程度地平移以贴近中
+心线(即视线)，使得它们看上去在视线的左右排成了两列。实际上，如图7.25 (左)所
+示，这些三角形的大小是完全相同的，透视投影矩阵对三角形进行了两次变换: (1)根据
+三角形与视点的距离，按比例对三角形进行了缩小变换; (2)对三角形进行平移变换，使
+其贴近视线，如图7.25右所示。经过了这两次变换之后，就产生了图7.20那张照片中的
+深度效果。
+
+![20220304_aTHNVR](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220304_aTHNVR.png)

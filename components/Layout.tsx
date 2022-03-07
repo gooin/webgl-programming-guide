@@ -32,7 +32,7 @@ const Content = styled.div`
 `;
 
 function Layout({ title, children }: PropsType) {
-    console.log('title', title);
+    // console.log('title', title);
     return (
         <AntdLayout>
             <Header>

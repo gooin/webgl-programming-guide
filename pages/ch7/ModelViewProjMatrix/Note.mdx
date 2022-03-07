@@ -1,0 +1,102 @@
+## 模型矩阵、视图矩阵、投影矩阵组合
+
+PerspectiveView.js的一个问题是，我们用了一大段枯燥的代码来定义所有顶点和
+颜色的数据。示例中只有6个三角形，我们还可以手动管理这些数据，但是如果三角形
+的数量进一步增加的话，那可真就是-一团糟了。幸运的是，对这个问题，确实还有更高
+效的方法。
+
+![20220305_IFAbpJ](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_IFAbpJ.png)
+
+利用这一点，我们只需按照下面的步骤，就能获得PerspectiveView的效果了:
+Í
+1. 在虚线处，即沿着Z轴准备3个三角形的顶点数据。
+2. 将其沿X轴正方向(以原始位置为基准)平移0.75单位，绘制这些三角形。
+3. 将其沿X轴负方向(以原始位置为基准)平移0.75单位，绘制这些三角形。
+
+`最终结果  = <投影矩阵> * <视图矩阵> * <模型矩阵> * <顶点坐标>`
+
+```ts
+    const verticesColors = new Float32Array([
+        // 顶点坐标和颜色
+        0.0,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
+        -0.5, -1.0,  -4.0,  0.4,  1.0,  0.4,
+        0.5, -1.0,  -4.0,  1.0,  0.4,  0.4,
+
+        0.0,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
+        -0.5, -1.0,  -2.0,  1.0,  1.0,  0.4,
+        0.5, -1.0,  -2.0,  1.0,  0.4,  0.4,
+
+        0.0,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one
+        -0.5, -1.0,   0.0,  0.4,  0.4,  1.0,
+        0.5, -1.0,   0.0,  1.0,  0.4,  0.4,
+    ]);
+```
+
+![20220305_N5eDht](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_N5eDht.png)
+
+
+### 绘制右侧三角形
+```ts
+const VSHADER_SOURCE = `
+            attribute vec4 a_Position;
+            attribute vec4 a_Color;
+            uniform mat4 u_ProjMatrix;
+            uniform mat4 u_ViewMatrix;
+            uniform mat4 u_ModelMatrix;
+            varying vec4 v_Color;
+            void main() {
+                gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
+                gl_PointSize = 10.0;
+                v_Color = a_Color;
+            }
+        `;
+```
+
+```ts
+const viewMatrix = new Matrix4();
+        const projMatrix = new Matrix4();
+        const modelMatrix = new Matrix4();
+
+        modelMatrix.setTranslate(0.75, 0, 0);
+        viewMatrix.setLookAt(
+            0, 0, 5,
+            0, 0, -100,
+            0, 1, 0
+        );
+        projMatrix.setPerspective(30, 1, 1, 100);
+
+        const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
+        const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+        const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
+        // 将矩阵传给uniform变量
+        gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+        gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+        gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+```
+![20220305_yo6PMF](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_yo6PMF.png)
+
+
+### 绘制左侧三角形
+```
+        // 绘制左侧三角形
+        modelMatrix.setTranslate(-0.75, 0, 0);
+        gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+```
+
+![20220305_TaVr00](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_TaVr00.png)
+
+
+## DeepBuffer Z-fighting
+
+```
+        gl.enable(gl.DEPTH_TEST);
+        gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
+
+
+        // Enable the polygon offset function
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+
+        gl.polygonOffset(1.0, 1.0);          // Set the polygon offset
+```

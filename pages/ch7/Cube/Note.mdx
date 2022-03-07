@@ -1,0 +1,58 @@
+## 立方体
+
+迄今为止，本书通过绘制- -些简单的三角形，向你展示了WebGL的诸多特性。你
+对绘制三维对象的基础知识应该已经有了足够的了解。下面， 我们就来绘制如图7.31所
+示的立方体(图右侧显示了立方体每个顶点的坐标)，其8个顶点的颜色分别为白色.品
+红色(亮紫色).红色、黄色、绿色、青色(蓝绿色).蓝色、黑色。第5章中曾提到过，
+为每个顶点定义颜色后，表面上的颜色会根据顶点颜色内插出来，形成-种光滑的渐变
+效果(“色体"，相当于二维的“色轮")。 新的程序名为HelloCube.
+
+![20220305_n8BUjT](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_n8BUjT.png)
+
+![20220305_e3JsRY](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_e3JsRY.png)
+
+
+```ts
+// 同时保存顶点坐标纹理坐标
+    // Create a cube
+    //    v6----- v5
+    //   /|      /|
+    //  v1------v0|
+    //  | |     | |
+    //  | |v7---|-|v4
+    //  |/      |/
+    //  v2------v3
+    const verticesColors = new Float32Array([
+        // Vertex coordinates and color
+        1.0,  1.0,  1.0,     1.0,  1.0,  1.0,  // v0 White
+        -1.0,  1.0,  1.0,     1.0,  0.0,  1.0,  // v1 Magenta
+        -1.0, -1.0,  1.0,     1.0,  0.0,  0.0,  // v2 Red
+        1.0, -1.0,  1.0,     1.0,  1.0,  0.0,  // v3 Yellow
+        1.0, -1.0, -1.0,     0.0,  1.0,  0.0,  // v4 Green
+        1.0,  1.0, -1.0,     0.0,  1.0,  1.0,  // v5 Cyan
+        -1.0,  1.0, -1.0,     0.0,  0.0,  1.0,  // v6 Blue
+        -1.0, -1.0, -1.0,     0.0,  0.0,  0.0   // v7 Black
+    ]);
+
+    // Indices of the vertices
+    const indices = new Uint8Array([
+        0, 1, 2,   0, 2, 3,    // front
+        0, 3, 4,   0, 4, 5,    // right
+        0, 5, 6,   0, 6, 1,    // up
+        1, 6, 7,   1, 7, 2,    // left
+        7, 4, 3,   7, 3, 2,    // down
+        4, 7, 6,   4, 6, 5     // back
+    ]);
+
+    // ！！！顶点信息
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+    gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+```
+
+
+![20220305_6gPKFE](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_6gPKFE.png)
+![20220305_r7BkEw](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_r7BkEw.png)
+![20220305_pxsjDC](https://cdn.jsdelivr.net/gh/crexk/pic-archive@main/uPic/20220305_pxsjDC.png)
+

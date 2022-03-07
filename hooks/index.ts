@@ -16,7 +16,7 @@ export const useWebGLInit = (canvasRef: MutableRefObject<HTMLCanvasElement | nul
     // const canvas = canvasRef.current;
     resizeCanvasToDisplaySize(canvas);
     let gl = canvas.getContext('webgl') as WebGLRenderingContext;
-    console.log('gl', gl);
+    // console.log('gl', gl);
     //指定清空的颜色
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     // 清空canvas
