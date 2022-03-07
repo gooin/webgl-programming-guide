@@ -13,6 +13,12 @@ import { Typography } from 'antd';
 
 const { Text } = Typography;
 
+interface KeyboardPropsType {
+    gl: WebGLRenderingContext,
+    n: number,
+    mvpMatrix: Matrix4
+}
+
 function useRender(gl: WebGLRenderingContext) {
     // console.log('useRender gl', gl);
     const [n, setN] = useState(0);
@@ -89,7 +95,7 @@ function useRender(gl: WebGLRenderingContext) {
     };
 }
 
-function useKeyboard(props) {
+function useKeyboard(props: KeyboardPropsType) {
     const {
         gl,
         n,
@@ -97,7 +103,7 @@ function useKeyboard(props) {
     } = props;
     const ANGLE_STEP = 3;
 
-    const [arm1Angle, setArm1Angle] = useState(-90);
+    const [arm1Angle, setArm1Angle] = useState(90);
     const [joint1Angle, setJoint1Angle] = useState(0);
 
     const g_modelMatrix = useMemo(() => new Matrix4(), []);
@@ -133,38 +139,38 @@ function useKeyboard(props) {
                 return;
             }
 
-            // 底座
+            // arm1 绘制底座
             const arm1Length = 10.0;
             g_modelMatrix.setTranslate(0.0, -12.0, 0.0);
             g_modelMatrix.rotate(arm1Angle, 0.0, 1.0, 0.0);
             drawBox(gl, n, mvpMatrix);
 
-            g_modelMatrix.setTranslate(0.0, arm1Length, 0.0);
-            g_modelMatrix.rotate(joint1Angle, 0.0, 1.0, 0.0);
+            // arm2
+            g_modelMatrix.translate(0.0, arm1Length, 0.0);
+            g_modelMatrix.rotate(joint1Angle, 0.0, 0.0, 1.0);
+            g_modelMatrix.scale(1.3, 1.0, 1.3); // Make it a little thicker
             drawBox(gl, n, mvpMatrix);
 
-            // return [joint1Angle, arm1Angle];
         };
 
-        function drawBox(gl, n, viewProjMatrix) {
+        function drawBox(gl: WebGLRenderingContext, n: number, viewProjMatrix: Matrix4) {
             const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
             const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
-
             g_mvpMatrix.set(viewProjMatrix);
             g_mvpMatrix.multiply(g_modelMatrix);
             gl.uniformMatrix4fv(u_MvpMatrix, false, g_mvpMatrix.elements);
-
-            console.log('g_mvpMatrix.elements',g_mvpMatrix.elements);
 
             // Calculate the normal transformation matrix and pass it to u_NormalMatrix
             g_normalMatrix.setInverseOf(g_modelMatrix);
             g_normalMatrix.transpose();
             gl.uniformMatrix4fv(u_NormalMatrix, false, g_normalMatrix.elements);
-            // Draw
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
             gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
         }
 
+        // console.log('draw');
+        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
         // document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'left'}));
     }, [arm1Angle, g_modelMatrix, g_mvpMatrix, g_normalMatrix, gl, joint1Angle, mvpMatrix, n, setArm1Angle, setJoint1Angle]);
 
