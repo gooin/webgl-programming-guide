@@ -21,7 +21,7 @@ import { FixedArray } from './types';
 class Matrix4 {
     elements: Float32Array;
 
-    constructor(opt_src?: FixedArray<number, 16>) {
+    constructor(opt_src?: Float32Array) {
         let i, s, d;
         if (opt_src) {
             s = opt_src;

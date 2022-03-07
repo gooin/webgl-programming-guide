@@ -150,6 +150,11 @@ const Home: NextPage = () => {
                                 <a>基础关节</a>
                             </Link>
                         </Paragraph>
+                        <Paragraph>
+                            <Link href="/ch9/MultiJointModel">
+                                <a>多节点模型</a>
+                            </Link>
+                        </Paragraph>
                     </div>
                 </div>
 
