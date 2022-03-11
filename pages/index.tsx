@@ -3,10 +3,15 @@ import Head from 'next/head';
 import styles from '@/styles/Home.module.css';
 import Link from 'next/link';
 import { Divider, PageHeader, Typography } from 'antd';
+import { pageConfig } from '../lib/pages';
+import _ from 'lodash';
 
 const { Title, Paragraph } = Typography;
 
-const Home: NextPage = () => {
+const Home: NextPage = ({pageConfig}) => {
+    console.log('pageConfig',pageConfig);
+
+
     return (
         <div className={styles.container}>
             <Head>
@@ -21,6 +26,29 @@ const Home: NextPage = () => {
 
             <main>
                 <div className={styles.main}>
+                    {_.map(pageConfig, (page, index) => {
+                        const { title, path, pages } = page;
+                        return (
+                            <div key={index}>
+                                <Divider orientation="left" plain>
+                                    {title}
+                                </Divider>
+                                <div className={styles.grid}>
+                                    {/* TODO 递归遍历这里*/}
+                                    {_.map(pages, (page, index) => {
+                                        const { title, path } = page;
+                                        return (
+                                            <div key={index} className={styles.gridItem}>
+                                                <Link href={path}>
+                                                    <a>{title}</a>
+                                                </Link>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
                     <Divider orientation="left" plain>
                         WebGL 编程指南
                     </Divider>
@@ -153,7 +181,7 @@ const Home: NextPage = () => {
                         <div className={styles.card}>
                             <h2>Ch10 高级技术 &rarr;</h2>
                             <Paragraph>
-                                <Link href="/ch10/Shadow">
+                                <Link href="/ch10/阴影">
                                     <a>阴影</a>
                                 </Link>
                             </Paragraph>
@@ -172,4 +200,19 @@ const Home: NextPage = () => {
     );
 };
 
+
+
+export async function getStaticProps() {
+    return {
+        props: {
+            pageConfig,
+        }, // will be passed to the page component as props
+    }
+}
+
+
+
 export default Home;
+
+
+

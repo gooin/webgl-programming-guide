@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import React, { useRef } from 'react';
 import { initShaders, initTextures, initVertexBuffersCh5_3 } from '@/utils/shader_util';
-import { useWebGLInit } from '@/hooks/index';
+import { useWebGLInit } from '@/utils/hooks';
 import Layout from '@/components/Layout';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';

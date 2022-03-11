@@ -1,19 +1,13 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    initShaders,
-    initVertexBuffersCh7_1,
-    initVertexBuffersCh8_1,
-    initVertexBuffersCh8_2, initVertexBuffersCube,
-} from '@/utils/shader_util';
-import { useWebGLInit } from '@/hooks/index';
+import { initShaders, initVertexBuffersCube } from '@/utils/shader_util';
+import { useWebGLInit } from '@/utils/hooks';
 import Layout from '@/components/Layout';
 import { Matrix4 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';
 import CanvasWrapper from '@/components/CanvasWrapper';
 import { Typography } from 'antd';
-import { func } from 'prop-types';
 
 const { Text } = Typography;
 

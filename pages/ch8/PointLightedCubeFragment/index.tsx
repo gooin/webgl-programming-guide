@@ -1,14 +1,9 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    initShaders,
-    initVertexBuffersCube,
-    initVertexBuffersCube_Ch8_1,
-    initVertexBuffersCube_Ch8_2,
-} from '@/utils/shader_util';
-import { useWebGLInit } from '@/hooks/index';
+import { initShaders, initVertexBuffersCube_Ch8_2 } from '@/utils/shader_util';
+import { useWebGLInit } from '@/utils/hooks';
 import Layout from '@/components/Layout';
-import { Matrix4, Vector3 } from '@/utils/matrix4_util';
+import { Matrix4 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';
 import CanvasWrapper from '@/components/CanvasWrapper';
