@@ -1,7 +1,5 @@
 .container {
   padding: 1rem 2rem;
-  width: 100vw;
-  height: 100vh;
 }
 
 .layout_header{
@@ -83,6 +81,7 @@
   justify-content: flex-start;
   flex-wrap: wrap;
   /*max-width: 800px;*/
+  width: 90vw;
 }
 
 .card {

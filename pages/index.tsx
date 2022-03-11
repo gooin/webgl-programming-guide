@@ -3,14 +3,43 @@ import Head from 'next/head';
 import styles from '@/styles/Home.module.css';
 import Link from 'next/link';
 import { Divider, PageHeader, Typography } from 'antd';
-import { pageConfig } from '../lib/pages';
+import { pageConfig, PageConfigType } from '../lib/pages';
 import _ from 'lodash';
 
 const { Title, Paragraph } = Typography;
 
-const Home: NextPage = ({pageConfig}) => {
-    console.log('pageConfig',pageConfig);
+const Home: NextPage = ({ pageConfig: PageConfigType }) => {
+    console.log('pageConfig', pageConfig);
 
+    const rendPageCard = (pageConfig: PageConfigType, realPath: string) => {
+        const { title, path, pages } = pageConfig;
+        return (
+            <div>
+                <div className={styles.grid}>
+                    {/* TODO 递归遍历这里*/}
+                    {_.map(pages, (page, index) => {
+                        const { title, path, pages: subPages } = page;
+                        return (
+                            <div key={index} className={styles.card}>
+                                <h2>{title}</h2>
+                                {subPages && _.map(subPages, (page, index) => {
+                                    const { title, path } = page;
+                                    return (
+                                        <Paragraph>
+                                            <Link href={`${realPath}/${path}`}>
+                                                <a>{title}</a>
+                                            </Link>
+                                        </Paragraph>
+                                    );
+                                })}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+        );
+    };
 
     return (
         <div className={styles.container}>
@@ -23,7 +52,6 @@ const Home: NextPage = ({pageConfig}) => {
                 className="site-page-header"
                 title="WebGL 学习笔记📒"
             />
-
             <main>
                 <div className={styles.main}>
                     {_.map(pageConfig, (page, index) => {
@@ -34,166 +62,17 @@ const Home: NextPage = ({pageConfig}) => {
                                     {title}
                                 </Divider>
                                 <div className={styles.grid}>
-                                    {/* TODO 递归遍历这里*/}
-                                    {_.map(pages, (page, index) => {
-                                        const { title, path } = page;
-                                        return (
-                                            <div key={index} className={styles.gridItem}>
-                                                <Link href={path}>
-                                                    <a>{title}</a>
-                                                </Link>
-                                            </div>
-                                        );
-                                    })}
+                                    {rendPageCard(page, path)}
                                 </div>
+
                             </div>
                         );
                     })}
-                    <Divider orientation="left" plain>
-                        WebGL 编程指南
-                    </Divider>
-                    <div className={styles.grid}>
-                        <div className={styles.card}>
-                            <h2>Ch4: 高级变换与动画基础 &rarr;</h2>
-                            <Paragraph>
-                                <Link href="/ch4/TranslateRotate">
-                                    <a>平移，然后旋转</a>
-                                </Link>
-                            </Paragraph>
 
-                            <Paragraph>
-                                <Link href="/ch4/Animate">
-                                <a>动画</a>
-                            </Link>
-                        </Paragraph>
-                    </div>
-                    <div className={styles.card}>
-                        <h2>Ch5 颜色与纹理 &rarr;</h2>
-                        <Paragraph>
-                            <Link href="/ch5/PointSizeInVertShader">
-                                <a>将非坐标数据传入顶点着色器</a>
-                            </Link>
-                        </Paragraph>
-
-                        <Paragraph>
-                            <Link href="/ch5/MultiAttributeSizeInterleaved">
-                                <a>gl.vertexAttribPointer() 的步进和偏移参数</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch5/ChangeColorByVarying">
-                                <a>修改颜色（varying变量）</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch5/Texture">
-                                <a>纹理映射</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch5/MultiTexture">
-                                <a>多幅纹理映射</a>
-                            </Link>
-                        </Paragraph>
-                    </div>
-
-                    <div className={styles.card}>
-                        <h2>Ch7 进入三维世界 &rarr;</h2>
-                        <Paragraph>
-                            <Link href="/ch7/EyePointAndViewDirection">
-                                <a>视点和视线</a>
-                            </Link>
-                        </Paragraph>
-
-                        <Paragraph>
-                            <Link href="/ch7/LookAtRotatedTrangles">
-                                <a>观察旋转的三角形</a>
-                            </Link>
-                        </Paragraph>
-
-                        <Paragraph>
-                            <Link href="/ch7/OrthoView">
-                                <a>正射投影</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch7/PerspectiveView">
-                                <a>透视投影</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch7/ModelViewProjMatrix">
-                                <a>模型矩阵、视图矩阵、投影矩阵组合</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch7/Cube">
-                                <a>立方体</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch7/SingleColorCube">
-                                <a>纯色立方体</a>
-                            </Link>
-                        </Paragraph>
-                    </div>
-                    <div className={styles.card}>
-                        <h2>Ch8 光照 &rarr;</h2>
-                        <Paragraph>
-                            <Link href="/ch8/LightedCube">
-                                <a>光照原理</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch8/LightedCubeAmbient">
-                                <a>环境光</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch8/LightedTranslatedRotatedCube">
-                                <a>运动物体的光照</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch8/PointLightedCube">
-                                <a>点光源光</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch8/PointLightedCubeFragment">
-                                <a>点光源光: 逐片元光照</a>
-                            </Link>
-                        </Paragraph>
-                    </div>
-                    <div className={styles.card}>
-                        <h2>Ch9 关节模型 &rarr;</h2>
-                        <Paragraph>
-                            <Link href="/ch9/JointModel">
-                                <a>基础关节</a>
-                            </Link>
-                        </Paragraph>
-                        <Paragraph>
-                            <Link href="/ch9/MultiJointModel">
-                                <a>多节点模型</a>
-                            </Link>
-                        </Paragraph>
-                    </div>
-                        <div className={styles.card}>
-                            <h2>Ch10 高级技术 &rarr;</h2>
-                            <Paragraph>
-                                <Link href="/ch10/阴影">
-                                    <a>阴影</a>
-                                </Link>
-                            </Paragraph>
-                        </div>
-                    </div>
+                    {/*<Divider orientation="left" plain>*/}
+                    {/*    WebGPU*/}
+                    {/*</Divider>*/}
                 </div>
-                <Divider orientation="left" plain>
-                    Luma.gl
-                </Divider>
-                {/*<Divider orientation="left" plain>*/}
-                {/*    WebGPU*/}
-                {/*</Divider>*/}
             </main>
 
         </div>

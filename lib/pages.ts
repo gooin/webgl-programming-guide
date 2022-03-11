@@ -1,10 +1,16 @@
-export const pageConfig = {
+export interface PageConfigType {
+    title: string;
+    path: string;
+    pages?: PageConfigType[];
+}
+
+export const pageConfig: Record<string, PageConfigType> = {
     'webgl-programing-guide': {
-        title: 'WebGL Programming Guide',
+        title: '📒 WebGL Programming Guide /  WebGL 编程指南',
         path: '/',
         pages: [
             {
-                title: 'Ch4: 高级变换与动画基础 &rarr;',
+                title: 'Ch4: 高级变换与动画基础',
                 path: 'ch4',
                 pages: [
                     {
@@ -17,7 +23,7 @@ export const pageConfig = {
                 ],
             },
             {
-                title: 'Ch5 颜色与纹理 &rarr;',
+                title: 'Ch5 颜色与纹理',
                 path: 'ch5',
                 pages: [
                     {
@@ -42,7 +48,7 @@ export const pageConfig = {
                 ],
             },
             {
-                title: 'Ch7 进入三维世界 &rarr;',
+                title: 'Ch7 进入三维世界',
                 path: 'ch7',
                 pages: [
                     {
@@ -71,7 +77,7 @@ export const pageConfig = {
                 ],
             },
             {
-                title: 'Ch8 光照 &rarr;',
+                title: 'Ch8 光照',
                 path: 'ch8',
                 pages: [
                     {
@@ -94,7 +100,7 @@ export const pageConfig = {
                 ],
             },
             {
-                title: 'Ch9 关节模型 &rarr;',
+                title: 'Ch9 关节模型',
                 path: 'ch9',
                 pages: [
                     {
@@ -107,7 +113,7 @@ export const pageConfig = {
                 ],
             },
             {
-                title: 'Ch10 高级技术 &rarr;',
+                title: 'Ch10 高级技术',
                 path: 'ch10',
                 pages: [
                     {
@@ -115,6 +121,16 @@ export const pageConfig = {
                         path: '阴影',
                     },
                 ],
+            },
+        ],
+    },
+    'luma.gl': {
+        title: 'luma.gl',
+        path: '/luma.gl',
+        pages: [
+            {
+                title: 'luma.gl',
+                path: 'luma.gl',
             },
         ],
     },
