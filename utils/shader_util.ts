@@ -1,5 +1,7 @@
 // 扩展ts定义的类型。
 
+import { BuffersType, ExtendWebGLBuffer } from '@/utils/types';
+
 declare global {
     interface WebGLRenderingContext {
         program: WebGLProgram;
@@ -48,6 +50,39 @@ function initArrayBuffer(gl: WebGLRenderingContext, data: ArrayBuffer, num: numb
     gl.enableVertexAttribArray(a_attribute);
 
     return true;
+}
+
+function initArrayBufferForLaterUse(gl: WebGLRenderingContext, data: ArrayBuffer, num: number, type: number): ExtendWebGLBuffer {
+    const buffer = gl.createBuffer() as ExtendWebGLBuffer;   // Create a buffer object
+    if (!buffer) {
+        console.log('Failed to create the buffer object');
+        return false;
+    }
+    // Write date into the buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+    // Store the necessary information to assign the object to the attribute variable later
+    buffer.num = num;
+    buffer.type = type;
+
+    return buffer;
+}
+
+function initElementArrayBufferForLaterUse(gl: WebGLRenderingContext, data: ArrayBuffer, type: number): ExtendWebGLBuffer {
+    const buffer = gl.createBuffer() as ExtendWebGLBuffer;   // Create a buffer object
+    if (!buffer) {
+        console.log('Failed to create the buffer object');
+        return false;
+    }
+    // Write date into the buffer object
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+    // Store the necessary information to assign the object to the attribute variable later
+    buffer.type = type;
+
+    return buffer;
 }
 
 export function initVertexBuffers(gl: WebGLRenderingContext) {
@@ -321,7 +356,7 @@ function loadTexture_Ch5_4(
  * @param fshader a fragment shader program (string)
  * @return created program object, or null if the creation has failed
  */
-function createProgram(gl: WebGLRenderingContext, vshader: string, fshader: string) {
+export function createProgram(gl: WebGLRenderingContext, vshader: string, fshader: string) {
     // Create shader object
     let vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
     let fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
@@ -435,30 +470,30 @@ export function initVertexBuffersCh8_1(gl: WebGLRenderingContext) {
     const verticesColors = new Float32Array([
         // 顶点坐标和颜色
         // Three triangles on the right side
-        0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
-        0.25, -1.0,  -4.0,  0.4,  1.0,  0.4,
-        1.25, -1.0,  -4.0,  1.0,  0.4,  0.4,
+        0.75, 1.0, -4.0, 0.4, 1.0, 0.4, // The back green one
+        0.25, -1.0, -4.0, 0.4, 1.0, 0.4,
+        1.25, -1.0, -4.0, 1.0, 0.4, 0.4,
 
-        0.75,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
-        0.25, -1.0,  -2.0,  1.0,  1.0,  0.4,
-        1.25, -1.0,  -2.0,  1.0,  0.4,  0.4,
+        0.75, 1.0, -2.0, 1.0, 1.0, 0.4, // The middle yellow one
+        0.25, -1.0, -2.0, 1.0, 1.0, 0.4,
+        1.25, -1.0, -2.0, 1.0, 0.4, 0.4,
 
-        0.75,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one
-        0.25, -1.0,   0.0,  0.4,  0.4,  1.0,
-        1.25, -1.0,   0.0,  1.0,  0.4,  0.4,
+        0.75, 1.0, 0.0, 0.4, 0.4, 1.0,  // The front blue one
+        0.25, -1.0, 0.0, 0.4, 0.4, 1.0,
+        1.25, -1.0, 0.0, 1.0, 0.4, 0.4,
 
         // Three triangles on the left side
-        -0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
-        -1.25, -1.0,  -4.0,  0.4,  1.0,  0.4,
-        -0.25, -1.0,  -4.0,  1.0,  0.4,  0.4,
+        -0.75, 1.0, -4.0, 0.4, 1.0, 0.4, // The back green one
+        -1.25, -1.0, -4.0, 0.4, 1.0, 0.4,
+        -0.25, -1.0, -4.0, 1.0, 0.4, 0.4,
 
-        -0.75,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
-        -1.25, -1.0,  -2.0,  1.0,  1.0,  0.4,
-        -0.25, -1.0,  -2.0,  1.0,  0.4,  0.4,
+        -0.75, 1.0, -2.0, 1.0, 1.0, 0.4, // The middle yellow one
+        -1.25, -1.0, -2.0, 1.0, 1.0, 0.4,
+        -0.25, -1.0, -2.0, 1.0, 0.4, 0.4,
 
-        -0.75,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one
-        -1.25, -1.0,   0.0,  0.4,  0.4,  1.0,
-        -0.25, -1.0,   0.0,  1.0,  0.4,  0.4,
+        -0.75, 1.0, 0.0, 0.4, 0.4, 1.0,  // The front blue one
+        -1.25, -1.0, 0.0, 0.4, 0.4, 1.0,
+        -0.25, -1.0, 0.0, 1.0, 0.4, 0.4,
     ]);
     const n = 18; // Three vertices per triangle * 6
 
@@ -488,18 +523,17 @@ export function initVertexBuffersCh8_2(gl: WebGLRenderingContext) {
     const verticesColors = new Float32Array([
         // 顶点坐标和颜色
 
+        0.0, 1.0, -2.0, 1.0, 1.0, 0.4, // The middle yellow one
+        -0.5, -1.0, -2.0, 1.0, 1.0, 0.4,
+        0.5, -1.0, -2.0, 1.0, 0.4, 0.4,
 
-        0.0,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
-        -0.5, -1.0,  -2.0,  1.0,  1.0,  0.4,
-        0.5, -1.0,  -2.0,  1.0,  0.4,  0.4,
+        0.0, 1.0, 0.0, 0.4, 0.4, 1.0,  // The front blue one
+        -0.5, -1.0, 0.0, 0.4, 0.4, 1.0,
+        0.5, -1.0, 0.0, 1.0, 0.4, 0.4,
 
-        0.0,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one
-        -0.5, -1.0,   0.0,  0.4,  0.4,  1.0,
-        0.5, -1.0,   0.0,  1.0,  0.4,  0.4,
-
-        0.0,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
-        -0.5, -1.0,  -4.0,  0.4,  1.0,  0.4,
-        0.5, -1.0,  -4.0,  1.0,  0.4,  0.4,
+        0.0, 1.0, -4.0, 0.4, 1.0, 0.4, // The back green one
+        -0.5, -1.0, -4.0, 0.4, 1.0, 0.4,
+        0.5, -1.0, -4.0, 1.0, 0.4, 0.4,
     ]);
     const n = 9; // Three vertices per triangle * 6
 
@@ -536,26 +570,25 @@ export function initVertexBuffersCube(gl: WebGLRenderingContext) {
     //  v2------v3
     const verticesColors = new Float32Array([
         // Vertex coordinates and color
-        1.0,  1.0,  1.0,     1.0,  1.0,  1.0,  // v0 White
-        -1.0,  1.0,  1.0,     1.0,  0.0,  1.0,  // v1 Magenta
-        -1.0, -1.0,  1.0,     1.0,  0.0,  0.0,  // v2 Red
-        1.0, -1.0,  1.0,     1.0,  1.0,  0.0,  // v3 Yellow
-        1.0, -1.0, -1.0,     0.0,  1.0,  0.0,  // v4 Green
-        1.0,  1.0, -1.0,     0.0,  1.0,  1.0,  // v5 Cyan
-        -1.0,  1.0, -1.0,     0.0,  0.0,  1.0,  // v6 Blue
-        -1.0, -1.0, -1.0,     0.0,  0.0,  0.0   // v7 Black
+        1.0, 1.0, 1.0, 1.0, 1.0, 1.0,  // v0 White
+        -1.0, 1.0, 1.0, 1.0, 0.0, 1.0,  // v1 Magenta
+        -1.0, -1.0, 1.0, 1.0, 0.0, 0.0,  // v2 Red
+        1.0, -1.0, 1.0, 1.0, 1.0, 0.0,  // v3 Yellow
+        1.0, -1.0, -1.0, 0.0, 1.0, 0.0,  // v4 Green
+        1.0, 1.0, -1.0, 0.0, 1.0, 1.0,  // v5 Cyan
+        -1.0, 1.0, -1.0, 0.0, 0.0, 1.0,  // v6 Blue
+        -1.0, -1.0, -1.0, 0.0, 0.0, 0.0,   // v7 Black
     ]);
 
     // Indices of the vertices
     const indices = new Uint8Array([
-        0, 1, 2,   0, 2, 3,    // front
-        0, 3, 4,   0, 4, 5,    // right
-        0, 5, 6,   0, 6, 1,    // up
-        1, 6, 7,   1, 7, 2,    // left
-        7, 4, 3,   7, 3, 2,    // down
-        4, 7, 6,   4, 6, 5     // back
+        0, 1, 2, 0, 2, 3,    // front
+        0, 3, 4, 0, 4, 5,    // right
+        0, 5, 6, 0, 6, 1,    // up
+        1, 6, 7, 1, 7, 2,    // left
+        7, 4, 3, 7, 3, 2,    // down
+        4, 7, 6, 4, 6, 5,     // back
     ]);
-
 
     // step1 创建缓冲区对象
     const vertexColorBuffer = gl.createBuffer();
@@ -569,7 +602,6 @@ export function initVertexBuffersCube(gl: WebGLRenderingContext) {
     gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
     // ！！！顶点信息
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
 
     const FSIZE = verticesColors.BYTES_PER_ELEMENT;
 
@@ -634,7 +666,6 @@ export function initVertexBuffersCube_Ch7_1(gl: WebGLRenderingContext) {
     return indices.length;
 }
 
-
 export function initVertexBuffersCube_Ch8_1(gl: WebGLRenderingContext) {
     // 同时保存顶点坐标纹理坐标
     // Create a cube
@@ -655,30 +686,30 @@ export function initVertexBuffersCube_Ch8_1(gl: WebGLRenderingContext) {
     ]);
 
     const colors = new Float32Array([     // Colors
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v1-v2-v3 front
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v3-v4-v5 right
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v5-v6-v1 up
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v1-v6-v7-v2 left
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v7-v4-v3-v2 down
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0　    // v4-v7-v6-v5 back
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v1-v2-v3 front
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v3-v4-v5 right
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v5-v6-v1 up
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v1-v6-v7-v2 left
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v7-v4-v3-v2 down
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,　    // v4-v7-v6-v5 back
     ]);
 
     const normals = new Float32Array([    // Normal
-        0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
-        1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
-        0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
-        -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
-        0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
-        0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
+        1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
+        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
+        0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,  // v7-v4-v3-v2 down
+        0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,   // v4-v7-v6-v5 back
     ]);
 
     const indices = new Uint8Array([       // Indices of the vertices
-        0, 1, 2,   0, 2, 3,    // front
-        4, 5, 6,   4, 6, 7,    // right
-        8, 9,10,   8,10,11,    // up
-        12,13,14,  12,14,15,    // left
-        16,17,18,  16,18,19,    // down
-        20,21,22,  20,22,23     // back
+        0, 1, 2, 0, 2, 3,    // front
+        4, 5, 6, 4, 6, 7,    // right
+        8, 9, 10, 8, 10, 11,    // up
+        12, 13, 14, 12, 14, 15,    // left
+        16, 17, 18, 16, 18, 19,    // down
+        20, 21, 22, 20, 22, 23,     // back
     ]);
 
     const indexBuffer = gl.createBuffer();
@@ -691,7 +722,6 @@ export function initVertexBuffersCube_Ch8_1(gl: WebGLRenderingContext) {
 
     return indices.length;
 }
-
 
 export function initVertexBuffersCube_Ch8_2(gl: WebGLRenderingContext) {
     // 同时保存顶点坐标纹理坐标
@@ -709,34 +739,34 @@ export function initVertexBuffersCube_Ch8_2(gl: WebGLRenderingContext) {
         2.0, 2.0, 2.0, 2.0, 2.0, -2.0, -2.0, 2.0, -2.0, -2.0, 2.0, 2.0, // v0-v5-v6-v1 up
         -2.0, 2.0, 2.0, -2.0, 2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, 2.0, // v1-v6-v7-v2 left
         -2.0, -2.0, -2.0, 2.0, -2.0, -2.0, 2.0, -2.0, 2.0, -2.0, -2.0, 2.0, // v7-v4-v3-v2 down
-        2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, 2.0, -2.0, 2.0, 2.0, -2.0  // v4-v7-v6-v5 back
+        2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, 2.0, -2.0, 2.0, 2.0, -2.0,  // v4-v7-v6-v5 back
     ]);
 
     const colors = new Float32Array([     // Colors
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v1-v2-v3 front
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v3-v4-v5 right
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v5-v6-v1 up
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v1-v6-v7-v2 left
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v7-v4-v3-v2 down
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0　    // v4-v7-v6-v5 back
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v1-v2-v3 front
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v3-v4-v5 right
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v5-v6-v1 up
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v1-v6-v7-v2 left
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v7-v4-v3-v2 down
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,　    // v4-v7-v6-v5 back
     ]);
 
     const normals = new Float32Array([    // Normal
-        0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
-        1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
-        0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
-        -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
-        0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
-        0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
+        1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
+        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
+        0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,  // v7-v4-v3-v2 down
+        0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,   // v4-v7-v6-v5 back
     ]);
 
     const indices = new Uint8Array([       // Indices of the vertices
-        0, 1, 2,   0, 2, 3,    // front
-        4, 5, 6,   4, 6, 7,    // right
-        8, 9,10,   8,10,11,    // up
-        12,13,14,  12,14,15,    // left
-        16,17,18,  16,18,19,    // down
-        20,21,22,  20,22,23     // back
+        0, 1, 2, 0, 2, 3,    // front
+        4, 5, 6, 4, 6, 7,    // right
+        8, 9, 10, 8, 10, 11,    // up
+        12, 13, 14, 12, 14, 15,    // left
+        16, 17, 18, 16, 18, 19,    // down
+        20, 21, 22, 20, 22, 23,     // back
     ]);
 
     const indexBuffer = gl.createBuffer();
@@ -750,77 +780,15 @@ export function initVertexBuffersCube_Ch8_2(gl: WebGLRenderingContext) {
     return indices.length;
 }
 
-
 export function initVertexBuffersCh9_1(gl: WebGLRenderingContext) {
     // Vertex coordinates（a cuboid 3.0 in width, 10.0 in height, and 3.0 in length with its origin at the center of its bottom)
     const vertices = new Float32Array([
-        1.5, 10.0, 1.5, -1.5, 10.0, 1.5, -1.5,  0.0, 1.5,  1.5,  0.0, 1.5, // v0-v1-v2-v3 front
-        1.5, 10.0, 1.5,  1.5,  0.0, 1.5,  1.5,  0.0,-1.5,  1.5, 10.0,-1.5, // v0-v3-v4-v5 right
-        1.5, 10.0, 1.5,  1.5, 10.0,-1.5, -1.5, 10.0,-1.5, -1.5, 10.0, 1.5, // v0-v5-v6-v1 up
-        -1.5, 10.0, 1.5, -1.5, 10.0,-1.5, -1.5,  0.0,-1.5, -1.5,  0.0, 1.5, // v1-v6-v7-v2 left
-        -1.5,  0.0,-1.5,  1.5,  0.0,-1.5,  1.5,  0.0, 1.5, -1.5,  0.0, 1.5, // v7-v4-v3-v2 down
-        1.5,  0.0,-1.5, -1.5,  0.0,-1.5, -1.5, 10.0,-1.5,  1.5, 10.0,-1.5  // v4-v7-v6-v5 back
-    ]);
-
-    const colors = new Float32Array([     // Colors
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v1-v2-v3 front
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v3-v4-v5 right
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v5-v6-v1 up
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v1-v6-v7-v2 left
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v7-v4-v3-v2 down
-        1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0　    // v4-v7-v6-v5 back
-    ]);
-
-    // Normal
-    const normals = new Float32Array([
-        0.0, 0.0, 1.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0, // v0-v1-v2-v3 front
-        1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  1.0, 0.0, 0.0, // v0-v3-v4-v5 right
-        0.0, 1.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0, // v0-v5-v6-v1 up
-        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, // v1-v6-v7-v2 left
-        0.0,-1.0, 0.0,  0.0,-1.0, 0.0,  0.0,-1.0, 0.0,  0.0,-1.0, 0.0, // v7-v4-v3-v2 down
-        0.0, 0.0,-1.0,  0.0, 0.0,-1.0,  0.0, 0.0,-1.0,  0.0, 0.0,-1.0  // v4-v7-v6-v5 back
-    ]);
-
-    // Indices of the vertices
-    const indices = new Uint8Array([
-        0, 1, 2,   0, 2, 3,    // front
-        4, 5, 6,   4, 6, 7,    // right
-        8, 9,10,   8,10,11,    // up
-        12,13,14,  12,14,15,    // left
-        16,17,18,  16,18,19,    // down
-        20,21,22,  20,22,23     // back
-    ]);
-
-    // Write the vertex property to buffers (coordinates and normals)
-    if (!initArrayBuffer(gl,  vertices, 3, gl.FLOAT, 'a_Position',)) return -1;
-    if (!initArrayBuffer(gl,  normals, 3, gl.FLOAT, 'a_Normal',)) return -1;
-    if (!initArrayBuffer(gl,  colors, 3, gl.FLOAT, 'a_Color',)) return -1;
-
-    // Unbind the buffer object
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-    // Write the indices to the buffer object
-    const indexBuffer = gl.createBuffer();
-    if (!indexBuffer) {
-        console.log('Failed to create the buffer object');
-        return -1;
-    }
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
-    return indices.length;
-
-}
-
-export function initVertexBuffersCh9_2(gl: WebGLRenderingContext) {
-    // Vertex coordinates（a cuboid 3.0 in width, 10.0 in height, and 3.0 in length with its origin at the center of its bottom)
-    const vertices = new Float32Array([
-        0.5, 1.0, 0.5, -0.5, 1.0, 0.5, -0.5, 0.0, 0.5,  0.5, 0.0, 0.5, // v0-v1-v2-v3 front
-        0.5, 1.0, 0.5,  0.5, 0.0, 0.5,  0.5, 0.0,-0.5,  0.5, 1.0,-0.5, // v0-v3-v4-v5 right
-        0.5, 1.0, 0.5,  0.5, 1.0,-0.5, -0.5, 1.0,-0.5, -0.5, 1.0, 0.5, // v0-v5-v6-v1 up
-        -0.5, 1.0, 0.5, -0.5, 1.0,-0.5, -0.5, 0.0,-0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
-        -0.5, 0.0,-0.5,  0.5, 0.0,-0.5,  0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
-        0.5, 0.0,-0.5, -0.5, 0.0,-0.5, -0.5, 1.0,-0.5,  0.5, 1.0,-0.5  // v4-v7-v6-v5 back
+        1.5, 10.0, 1.5, -1.5, 10.0, 1.5, -1.5, 0.0, 1.5, 1.5, 0.0, 1.5, // v0-v1-v2-v3 front
+        1.5, 10.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, -1.5, 1.5, 10.0, -1.5, // v0-v3-v4-v5 right
+        1.5, 10.0, 1.5, 1.5, 10.0, -1.5, -1.5, 10.0, -1.5, -1.5, 10.0, 1.5, // v0-v5-v6-v1 up
+        -1.5, 10.0, 1.5, -1.5, 10.0, -1.5, -1.5, 0.0, -1.5, -1.5, 0.0, 1.5, // v1-v6-v7-v2 left
+        -1.5, 0.0, -1.5, 1.5, 0.0, -1.5, 1.5, 0.0, 1.5, -1.5, 0.0, 1.5, // v7-v4-v3-v2 down
+        1.5, 0.0, -1.5, -1.5, 0.0, -1.5, -1.5, 10.0, -1.5, 1.5, 10.0, -1.5,  // v4-v7-v6-v5 back
     ]);
 
     const colors = new Float32Array([     // Colors
@@ -873,6 +841,212 @@ export function initVertexBuffersCh9_2(gl: WebGLRenderingContext) {
 
 }
 
+export function initVertexBuffersCh9_2(gl: WebGLRenderingContext) {
+    // Vertex coordinates（a cuboid 3.0 in width, 10.0 in height, and 3.0 in length with its origin at the center of its bottom)
+    const vertices = new Float32Array([
+        0.5, 1.0, 0.5, -0.5, 1.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, // v0-v1-v2-v3 front
+        0.5, 1.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5, // v0-v3-v4-v5 right
+        0.5, 1.0, 0.5, 0.5, 1.0, -0.5, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5, // v0-v5-v6-v1 up
+        -0.5, 1.0, 0.5, -0.5, 1.0, -0.5, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
+        -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
+        0.5, 0.0, -0.5, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5,  // v4-v7-v6-v5 back
+    ]);
 
+    const colors = new Float32Array([     // Colors
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v1-v2-v3 front
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v3-v4-v5 right
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v0-v5-v6-v1 up
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v1-v6-v7-v2 left
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // v7-v4-v3-v2 down
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,　    // v4-v7-v6-v5 back
+    ]);
 
+    // Normal
+    const normals = new Float32Array([
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, // v0-v1-v2-v3 front
+        1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, // v0-v3-v4-v5 right
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v0-v5-v6-v1 up
+        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, // v1-v6-v7-v2 left
+        0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, // v7-v4-v3-v2 down
+        0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,  // v4-v7-v6-v5 back
+    ]);
+
+    // Indices of the vertices
+    const indices = new Uint8Array([
+        0, 1, 2, 0, 2, 3,    // front
+        4, 5, 6, 4, 6, 7,    // right
+        8, 9, 10, 8, 10, 11,    // up
+        12, 13, 14, 12, 14, 15,    // left
+        16, 17, 18, 16, 18, 19,    // down
+        20, 21, 22, 20, 22, 23,     // back
+    ]);
+
+    // Write the vertex property to buffers (coordinates and normals)
+    if (!initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) return -1;
+    if (!initArrayBuffer(gl, normals, 3, gl.FLOAT, 'a_Normal')) return -1;
+    if (!initArrayBuffer(gl, colors, 3, gl.FLOAT, 'a_Color')) return -1;
+
+    // Unbind the buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    // Write the indices to the buffer object
+    const indexBuffer = gl.createBuffer();
+    if (!indexBuffer) {
+        console.log('Failed to create the buffer object');
+        return -1;
+    }
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+    return indices.length;
+
+}
+
+export function initVertexBuffersCh10_1_plane(gl: WebGLRenderingContext): BuffersType {
+    // Create a plane
+    //  v1------v0
+    //  |        |
+    //  |        |
+    //  |        |
+    //  v2------v3
+
+    const vertices = new Float32Array([
+        3.0, -1.7, 2.5, -3.0, -1.7, 2.5, -3.0, -1.7, -2.5, 3.0, -1.7, -2.5,    // v0-v1-v2-v3
+    ]);
+
+    const colors = new Float32Array([     // Colors
+        1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    ]);
+
+    // Indices of the vertices
+    const indices = new Uint8Array([
+        0, 1, 2, 0, 2, 3,    // front
+    ]);
+
+    // Write the vertex property to buffers (coordinates and normals)
+    const o: BuffersType = {};  // Utilize Object object to return multiple buffer objects togethe
+
+    // Write vertex information to buffer object
+    o.vertexBuffer = initArrayBufferForLaterUse(gl, vertices, 3, gl.FLOAT);
+    o.colorBuffer = initArrayBufferForLaterUse(gl, colors, 3, gl.FLOAT);
+    o.indexBuffer = initElementArrayBufferForLaterUse(gl, indices, gl.UNSIGNED_BYTE);
+
+    if (!o.vertexBuffer || !o.colorBuffer || !o.indexBuffer) {
+        console.log('error, initVertexBuffersCh10_1_plane');
+    }
+
+    o.numIndices = indices.length;
+
+    // Unbind the buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+    return o;
+
+}
+
+export function initVertexBuffersCh10_1_triangle(gl: WebGLRenderingContext): BuffersType {
+    // Create a triangle
+    //       v2
+    //      / |
+    //     /  |
+    //    /   |
+    //  v0----v1
+
+    const vertices = new Float32Array([
+        -0.8, 3.5, 0.0, 0.8, 3.5, 0.0, 0.0, 3.5, 1.8,
+    ]);
+
+    const colors = new Float32Array([     // Colors
+        1.0, 0.5, 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 0.0,
+    ]);
+
+    // Indices of the vertices
+    const indices = new Uint8Array([
+        0, 1, 2,
+    ]);
+
+    // Write the vertex property to buffers (coordinates and normals)
+    const o: BuffersType = {};  // Utilize Object object to return multiple buffer objects togethe
+
+    // Write vertex information to buffer object
+    o.vertexBuffer = initArrayBufferForLaterUse(gl, vertices, 3, gl.FLOAT);
+    o.colorBuffer = initArrayBufferForLaterUse(gl, colors, 3, gl.FLOAT);
+    o.indexBuffer = initElementArrayBufferForLaterUse(gl, indices, gl.UNSIGNED_BYTE);
+
+    if (!o.vertexBuffer || !o.colorBuffer || !o.indexBuffer) {
+        if (!o.vertexBuffer || !o.colorBuffer || !o.indexBuffer) {
+            console.log('error, initVertexBuffersCh10_1_trangle');
+        }
+    }
+    o.numIndices = indices.length;
+
+    // Unbind the buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+    return o;
+}
+
+export function initFramebufferObject(gl: WebGLRenderingContext) {
+    const OFFSCREEN_WIDTH = 2048, OFFSCREEN_HEIGHT = 2048;
+    let framebuffer: WebGLFramebuffer | null;
+    let texture = WebGLTexture | null;
+    let depthBuffer: WebGLRenderbuffer | null;
+
+    // Define the error handling function
+    const error = function () {
+        if (framebuffer) gl.deleteFramebuffer(framebuffer);
+        if (texture) gl.deleteTexture(texture);
+        if (depthBuffer) gl.deleteRenderbuffer(depthBuffer);
+        return null;
+    };
+
+    // Create a framebuffer object (FBO)
+    framebuffer = gl.createFramebuffer();
+    if (!framebuffer) {
+        console.log('Failed to create frame buffer object');
+        return error();
+    }
+
+    // Create a texture object and set its size and parameters
+    texture = gl.createTexture(); // Create a texture object
+    if (!texture) {
+        console.log('Failed to create texture object');
+        return error();
+    }
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, OFFSCREEN_WIDTH, OFFSCREEN_HEIGHT, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    // Create a renderbuffer object and Set its size and parameters
+    depthBuffer = gl.createRenderbuffer(); // Create a renderbuffer object
+    if (!depthBuffer) {
+        console.log('Failed to create renderbuffer object');
+        return error();
+    }
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, OFFSCREEN_WIDTH, OFFSCREEN_HEIGHT);
+
+    // Attach the texture and the renderbuffer object to the FBO
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+    // Check if FBO is configured correctly
+    var e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+        console.log('Frame buffer object is incomplete: ' + e.toString());
+        return error();
+    }
+
+    framebuffer.texture = texture; // keep the required object
+
+    // Unbind the buffer object
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+    return framebuffer;
+}
 

@@ -1,14 +1,22 @@
+// @ts-nocheck
 import type { NextPage } from 'next';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { initShaders, initVertexBuffersCh9_1 } from '@/utils/shader_util';
+import {
+    createProgram,
+    initFramebufferObject,
+    initVertexBuffersCh10_1_plane,
+    initVertexBuffersCh10_1_triangle,
+} from '@/utils/shader_util';
 import { useWebGLInit } from '@/hooks/index';
 import Layout from '@/components/Layout';
 import { Matrix4 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';
 import MdxWrapper from '@/components/MdxWrapper';
 import CanvasWrapper from '@/components/CanvasWrapper';
-import VSHADER_SOURCE from '@/shaders/vert/ch9_s1.vert';
-import FSHADER_SOURCE from '@/shaders/frag/ch9_s1.frag';
+import VSHADER_SOURCE from '@/shaders/vert/ch10_s1.vert';
+import FSHADER_SOURCE from '@/shaders/frag/ch10_s1.frag';
+import VSHADER_SHADOW_SOURCE from '@/shaders/vert/ch10_s1_shadow.vert';
+import FSHADER_SHADOW_SOURCE from '@/shaders/frag/ch10_s1_shadow.frag';
 import { Typography } from 'antd';
 
 const { Text } = Typography;
@@ -25,66 +33,143 @@ function useRender(gl: WebGLRenderingContext) {
     const mvpMatrix = useMemo(() => new Matrix4(), []);
     const [isInit, setIsInit] = useState(false);
 
+    const OFFSCREEN_WIDTH = 2048, OFFSCREEN_HEIGHT = 2048;
+    const LIGHT_X = 0, LIGHT_Y = 7, LIGHT_Z = 2; // Position of the light source
+
     useEffect(() => {
         if (!gl) return;
         if (isInit) return;
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
-
-        const tempN = initVertexBuffersCh9_1(gl);
-        setN(tempN);
-
-        console.log('mvpMatrix', mvpMatrix);
-
-        const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
-        const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
-        const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
-        const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
-        const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
-        const u_AmbientLight = gl.getUniformLocation(gl.program, 'u_AmbientLight');
-        if (!u_MvpMatrix || !u_NormalMatrix || !u_LightColor || !u_LightPosition || !u_AmbientLight) {
-            console.log('Failed to get the storage location');
-            console.log(u_ModelMatrix, u_NormalMatrix, u_LightColor, u_LightPosition, u_AmbientLight);
-
+        const shadowProgram = createProgram(gl, VSHADER_SHADOW_SOURCE, FSHADER_SHADOW_SOURCE) as WebGLProgram;
+        shadowProgram.a_Position = gl.getAttribLocation(shadowProgram, 'a_Position');
+        shadowProgram.u_MvpMatrix = gl.getAttribLocation(shadowProgram, 'u_MvpMatrix');
+        if (shadowProgram.a_Position < 0 || !shadowProgram.u_MvpMatrix) {
+            console.log('Failed to get the storage location of attribute or uniform variable from shadowProgram');
             return;
         }
 
-        gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
-        gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
-        // Set the light direction (in the world coordinate)
-        gl.uniform3f(u_LightPosition, 20, 20.0, 20);
-
-        // const mvpMatrix = new Matrix4();
-        const modelMatrix = new Matrix4(); // 模型矩阵
-        const normalMatrix = new Matrix4(); // 变换法向量的矩阵
-        gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-
-        normalMatrix.setInverseOf(modelMatrix);
-        normalMatrix.transpose();
-
-        gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
-
-        mvpMatrix.setPerspective(50, 1, 1, 100);
-        mvpMatrix.lookAt(20, 10, 30, 0, 0, 0, 0, 1, 0);
-        mvpMatrix.multiply(modelMatrix);
-
-        // 将矩阵传给uniform变量
-        gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
-
-        if (n < 0) {
-            console.log('Failed to set the positions of the vertices');
+        const normalProgram = createProgram(gl, VSHADER_SOURCE, FSHADER_SOURCE);
+        normalProgram.a_Position = gl.getAttribLocation(normalProgram, 'a_Position');
+        normalProgram.a_Color = gl.getAttribLocation(normalProgram, 'a_Color');
+        normalProgram.u_MvpMatrix = gl.getUniformLocation(normalProgram, 'u_MvpMatrix');
+        normalProgram.u_MvpMatrixFromLight = gl.getUniformLocation(normalProgram, 'u_MvpMatrixFromLight');
+        normalProgram.u_ShadowMap = gl.getUniformLocation(normalProgram, 'u_ShadowMap');
+        if (normalProgram.a_Position < 0 || normalProgram.a_Color < 0 || !normalProgram.u_MvpMatrix ||
+            !normalProgram.u_MvpMatrixFromLight || !normalProgram.u_ShadowMap) {
+            console.log('Failed to get the storage location of attribute or uniform variable from normalProgram');
             return;
         }
-        // 清空canvas
-        // gl.clear(gl.COLOR_BUFFER_BIT);
-        //绘制点
-        // gl.drawArrays(gl.TRIANGLES, 0, n);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        //
-        // // Draw the cube
-        gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+
+        const plane = initVertexBuffersCh10_1_plane(gl);
+        const triangle = initVertexBuffersCh10_1_triangle(gl);
+
+        const fbo = initFramebufferObject(gl);
+        if (!fbo) {
+            console.log('Failed to initialize frame buffer object');
+            return;
+        }
+
+        gl.activeTexture(gl.TEXTURE0); // Set a texture object to the texture unit
+        gl.bindTexture(gl.TEXTURE_2D, fbo.texture);
+
+        // Set the clear color and enable the depth test
+        gl.clearColor(0, 0, 0, 1);
+        gl.enable(gl.DEPTH_TEST);
+
+        const viewProjMatrixFromLight = new Matrix4(); // Prepare a view projection matrix for generating a shadow map
+        viewProjMatrixFromLight.setPerspective(70.0, OFFSCREEN_WIDTH / OFFSCREEN_HEIGHT, 1.0, 100.0);
+        viewProjMatrixFromLight.lookAt(LIGHT_X, LIGHT_Y, LIGHT_Z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+        const viewProjMatrix = new Matrix4();          // Prepare a view projection matrix for regular drawing
+        viewProjMatrix.setPerspective(45, 1, 1.0, 100.0);
+        viewProjMatrix.lookAt(0.0, 7.0, 9.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+        const currentAngle = 0.0; // Current rotation angle (degrees)
+        const mvpMatrixFromLight_t = new Matrix4(); // A model view projection matrix from light source (for triangle)
+        const mvpMatrixFromLight_p = new Matrix4(); // A model view projection matrix from light source (for plane)
+        const tick = function () {
+            currentAngle = animate(currentAngle);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);               // Change the drawing destination to FBO
+            gl.viewport(0, 0, OFFSCREEN_HEIGHT, OFFSCREEN_HEIGHT); // Set view port for FBO
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);   // Clear FBO
+
+            gl.useProgram(shadowProgram); // Set shaders for generating a shadow map
+            // Draw the triangle and the plane (for generating a shadow map)
+            drawTriangle(gl, shadowProgram, triangle, currentAngle, viewProjMatrixFromLight);
+            mvpMatrixFromLight_t.set(g_mvpMatrix); // Used later
+            drawPlane(gl, shadowProgram, plane, viewProjMatrixFromLight);
+            mvpMatrixFromLight_p.set(g_mvpMatrix); // Used later
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);               // Change the drawing destination to color buffer
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    // Clear color and depth buffer
+
+            gl.useProgram(normalProgram); // Set the shader for regular drawing
+            gl.uniform1i(normalProgram.u_ShadowMap, 0);  // Pass 0 because gl.TEXTURE0 is enabledする
+            // Draw the triangle and plane ( for regular drawing)
+            gl.uniformMatrix4fv(normalProgram.u_MvpMatrixFromLight, false, mvpMatrixFromLight_t.elements);
+            drawTriangle(gl, normalProgram, triangle, currentAngle, viewProjMatrix);
+            gl.uniformMatrix4fv(normalProgram.u_MvpMatrixFromLight, false, mvpMatrixFromLight_p.elements);
+            drawPlane(gl, normalProgram, plane, viewProjMatrix);
+
+            window.requestAnimationFrame(tick, canvas);
+        };
+
+        // Coordinate transformation matrix
+        var g_modelMatrix = new Matrix4();
+        var g_mvpMatrix = new Matrix4();
+
+        function drawTriangle(gl, program, triangle, angle, viewProjMatrix) {
+            // Set rotate angle to model matrix and draw triangle
+            g_modelMatrix.setRotate(angle, 0, 1, 0);
+            draw(gl, program, triangle, viewProjMatrix);
+        }
+
+        function drawPlane(gl, program, plane, viewProjMatrix) {
+            // Set rotate angle to model matrix and draw plane
+            g_modelMatrix.setRotate(-45, 0, 1, 1);
+            draw(gl, program, plane, viewProjMatrix);
+        }
+
+        function draw(gl, program, o, viewProjMatrix) {
+            initAttributeVariable(gl, program.a_Position, o.vertexBuffer);
+            if (program.a_Color != undefined) // If a_Color is defined to attribute
+                initAttributeVariable(gl, program.a_Color, o.colorBuffer);
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, o.indexBuffer);
+
+            // Calculate the model view project matrix and pass it to u_MvpMatrix
+            g_mvpMatrix.set(viewProjMatrix);
+            g_mvpMatrix.multiply(g_modelMatrix);
+            gl.uniformMatrix4fv(program.u_MvpMatrix, false, g_mvpMatrix.elements);
+
+            gl.drawElements(gl.TRIANGLES, o.numIndices, gl.UNSIGNED_BYTE, 0);
+        }
+
+        // Assign the buffer objects and enable the assignment
+        function initAttributeVariable(gl, a_attribute, buffer) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.vertexAttribPointer(a_attribute, buffer.num, buffer.type, false, 0, 0);
+            gl.enableVertexAttribArray(a_attribute);
+        }
+
+        var ANGLE_STEP = 40;   // The increments of rotation angle (degrees)
+
+        var last = Date.now(); // Last time that this function was called
+        function animate(angle) {
+            var now = Date.now();   // Calculate the elapsed time
+            var elapsed = now - last;
+            last = now;
+            // Update the current rotation angle (adjusted by the elapsed time)
+            var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+            return newAngle % 360;
+        }
+
+        tick();
+
         setIsInit(true);
     }, [gl, n, mvpMatrix, isInit]);
 
