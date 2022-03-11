@@ -1,13 +1,7 @@
 import type { NextPage } from 'next';
 import React, { useRef } from 'react';
-import {
-    cratePointSizeBuffer,
-    initShaders, initTextures,
-    initVertexBuffers,
-    initVertexBuffersCh5,
-    initVertexBuffersCh5_2, initVertexBuffersCh5_3, initVertexBuffersCh7_1,
-} from '@/utils/shader_util';
-import { useWebGLInit } from '@/hooks/index';
+import { initShaders, initVertexBuffersCh7_1 } from '@/utils/shader_util';
+import { useWebGLInit } from '@/utils/hooks';
 import Layout from '@/components/Layout';
 import { Matrix4 } from '@/utils/matrix4_util';
 import Note from './Note.mdx';

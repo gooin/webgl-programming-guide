@@ -1,6 +1,8 @@
 // @ts-nocheck
 import type { NextPage } from 'next';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { initShaders, initVertexBuffersCh9_1 } from '@/utils/shader_util';
+import { useWebGLInit } from '@/utils/hooks';
 import {
     createProgram,
     initFramebufferObject,
